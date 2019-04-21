@@ -49,16 +49,7 @@ public class ResourceControllerTest {
 	}
 
 	@Test
-	public void return404IfBadURL() throws Exception {
-		RequestBuilder requestBuilder = MockMvcRequestBuilders
-				.get("/undefinedResourceLocation")
-				.accept(MediaType.APPLICATION_JSON);
-		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
-		Assert.assertEquals(result.getResponse().getStatus(), 404);
-	}
-
-	@Test
-	public void returnResourceListIfRequested() throws Exception {
+	public void getResources_Requested_ReturnResourceList() throws Exception {
 
 		Mockito.when(resourceService.getResources())
 		.thenReturn(mockResources);
@@ -72,5 +63,39 @@ public class ResourceControllerTest {
 
 		JSONAssert.assertEquals(expected, result.getResponse().getContentAsString(), false);
 	}
+
+	@Test
+	public void getResource_IdFound_ReturnResource() throws Exception {
+		Mockito.when(resourceService.getResource(mockResource1.getId()))
+		.thenReturn(mockResource1);
+
+		RequestBuilder requestBuilder = MockMvcRequestBuilders
+				.get("/resources/" + mockResource1.getId())
+				.accept(MediaType.APPLICATION_JSON);
+
+		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+		String expected = "{id:1,name:MockResource1}";
+
+		JSONAssert.assertEquals(expected, result.getResponse().getContentAsString(), false);
+
+
+	}
+
+	@Test
+	public void getResource_IdUnknown_Return404() throws Exception {
+		Long unknownId = 99999L;
+
+		Mockito.when(resourceService.getResource(unknownId))
+		.thenReturn(null);
+
+		RequestBuilder requestBuilder = MockMvcRequestBuilders
+				.get("/resources/" + unknownId)
+				.accept(MediaType.APPLICATION_JSON);
+
+		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+		Assert.assertEquals(404, result.getResponse().getStatus());
+
+	}
+
 
 }

@@ -24,4 +24,13 @@ public class ResourceService {
 	public List<Resource> getResources() {
 		return allResources;
 	}
+
+	public Resource getResource(Long id) {
+		for (Resource r : allResources) {
+			if (r.getId() == id) {
+				return r;
+			}
+		}
+		return null;
+	}
 }
