@@ -1,0 +1,31 @@
+!.gitignore
+
+*.swp
+*.tmp
+
+# Java class files
+*.class
+
+# generated files
+bin/
+
+# Eclipse project files
+.classpath
+.project
+.settings
+.recommenders
+*.launch
+.springBeans
+
+# Gradle
+.gradletasknamecache
+.gradle/
+build/
+bin/
+!gradle/wrapper/gradle-wrapper.jar
+!gradle.build
+!**/gradle.build
+!gradle.properties
+!**/gradle.properties
+!settings.gradle
+!**/settings.gradle
