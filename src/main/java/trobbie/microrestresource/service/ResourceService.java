@@ -25,10 +25,18 @@ public class ResourceService {
 		allResources.add(new Resource(1, "TestUser1"));
 	}
 
+	/*
+	 * Return list of resources.
+	 * Return empty list if no resources.
+	 */
 	public List<Resource> getResources() {
 		return allResources;
 	}
 
+	/*
+	 * Return resource object, given the id of the resource.
+	 * Return null if id not found.
+	 */
 	public Resource getResource(Long id) {
 		for (Resource r : allResources) {
 			if (r.getId() == id) {

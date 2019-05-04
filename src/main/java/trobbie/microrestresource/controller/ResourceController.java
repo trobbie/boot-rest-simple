@@ -24,11 +24,23 @@ public class ResourceController {
 	@Autowired
 	private ResourceService resourceService;
 
+	/*
+	 * Returns list of retrieved resources.
+	 *
+	 * @return the HTTP response of a list of retrieved resources
+	 */
 	@RequestMapping(value=RELATIVE_PATH, method=RequestMethod.GET)
 	public ResponseEntity<List<Resource>> getResources() {
 		return new ResponseEntity<List<Resource>>(resourceService.getResources(), HttpStatus.OK);
 	}
 
+	/*
+	 * Returns the retrieved resource.
+	 *
+	 * @param id the id of the specified resource
+	 * @return the HTTP response of a retrieved resource, identified by the specified id, or an HTTP
+	 * 		response of status code 404 if not found.
+	 */
 	@RequestMapping(value=RELATIVE_PATH+"/{id}", method=RequestMethod.GET)
 	public ResponseEntity<Resource> getResource(@PathVariable("id") Long id) {
 		Resource r = resourceService.getResource(id);
