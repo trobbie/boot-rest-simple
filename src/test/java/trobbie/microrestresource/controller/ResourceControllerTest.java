@@ -14,6 +14,7 @@ import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -26,6 +27,8 @@ import trobbie.microrestresource.service.ResourceService;
 
 
 /**
+ * Test method syntax: MethodName_StateUnderTest_ExpectedBehavior
+ *
  * @author Trevor Robbie
  *
  */
@@ -39,20 +42,41 @@ public class ResourceControllerTest {
 	@MockBean
 	private ResourceService resourceService;
 
+	private List<Resource> mockResourceSetEmpty;
+	private List<Resource> mockResourceSetA;
 	private Resource mockResource1;
-	private List<Resource> mockResources;
 
 	public ResourceControllerTest() {
+		this.mockResourceSetEmpty = new ArrayList<Resource>();
+
 		this.mockResource1 = new Resource(1, "MockResource1");
-		this.mockResources = new ArrayList<Resource>();
-		this.mockResources.add(this.mockResource1);
+
+		this.mockResourceSetA = new ArrayList<Resource>();
+		this.mockResourceSetA.add(this.mockResource1);
+	}
+
+	@Test
+	public void getResources_RequestedOnEmptyData_ReturnEmptyList() throws Exception {
+
+		Mockito.when(resourceService.getResources())
+		.thenReturn(mockResourceSetEmpty);
+
+		RequestBuilder requestBuilder = MockMvcRequestBuilders
+				.get(ResourceController.RELATIVE_PATH)
+				.accept(MediaType.APPLICATION_JSON);
+
+		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+		String expected = "[]";
+
+		Assert.assertEquals(HttpStatus.OK.value(), result.getResponse().getStatus());
+		JSONAssert.assertEquals(expected, result.getResponse().getContentAsString(), false);
 	}
 
 	@Test
 	public void getResources_Requested_ReturnResourceList() throws Exception {
 
 		Mockito.when(resourceService.getResources())
-		.thenReturn(mockResources);
+		.thenReturn(mockResourceSetA);
 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders
 				.get(ResourceController.RELATIVE_PATH)
@@ -61,6 +85,7 @@ public class ResourceControllerTest {
 		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 		String expected = "[{id:1,name:MockResource1}]";
 
+		Assert.assertEquals(HttpStatus.OK.value(), result.getResponse().getStatus());
 		JSONAssert.assertEquals(expected, result.getResponse().getContentAsString(), false);
 	}
 
@@ -76,13 +101,13 @@ public class ResourceControllerTest {
 		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 		String expected = "{id:1,name:MockResource1}";
 
+		Assert.assertEquals(HttpStatus.OK.value(), result.getResponse().getStatus());
 		JSONAssert.assertEquals(expected, result.getResponse().getContentAsString(), false);
-
 
 	}
 
 	@Test
-	public void getResource_IdUnknown_Return404() throws Exception {
+	public void getResource_IdUnknown_Return404NotFound() throws Exception {
 		Long unknownId = 99999L;
 
 		Mockito.when(resourceService.getResource(unknownId))
@@ -93,7 +118,23 @@ public class ResourceControllerTest {
 				.accept(MediaType.APPLICATION_JSON);
 
 		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
-		Assert.assertEquals(404, result.getResponse().getStatus());
+		Assert.assertEquals(HttpStatus.NOT_FOUND.value(), result.getResponse().getStatus());
+
+	}
+
+	@Test
+	public void getResource_StringIdRequested_Return400BadRequest() throws Exception {
+
+		// should not call service layer at all
+		Mockito.when(resourceService.getResource(Mockito.anyLong()))
+		.thenThrow(RuntimeException.class);
+
+		RequestBuilder requestBuilder = MockMvcRequestBuilders
+				.get(ResourceController.RELATIVE_PATH + "/stringtest")
+				.accept(MediaType.APPLICATION_JSON);
+
+		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+		Assert.assertEquals(HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus());
 
 	}
 
