@@ -8,6 +8,8 @@ import org.springframework.stereotype.Component;
 import trobbie.microrestresource.model.Resource;
 
 /**
+ *
+ *
  * @author Trevor Robbie
  *
  */
@@ -17,6 +19,8 @@ public class ResourceService {
 	private static List<Resource> allResources;
 
 	static {
+		// TODO: needs data layer implementation
+		//   For now, hard-code the data
 		allResources = new ArrayList<Resource>();
 		allResources.add(new Resource(1, "TestUser1"));
 	}
