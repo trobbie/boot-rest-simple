@@ -20,16 +20,16 @@ import trobbie.microrestresource.service.ResourceService;
 
 @RestController
 public class ResourceController {
-
+	static public final String RELATIVE_PATH = "/resources";
 	@Autowired
 	private ResourceService resourceService;
 
-	@RequestMapping(value="/resources", method=RequestMethod.GET)
+	@RequestMapping(value=RELATIVE_PATH, method=RequestMethod.GET)
 	public ResponseEntity<List<Resource>> getResources() {
 		return new ResponseEntity<List<Resource>>(resourceService.getResources(), HttpStatus.OK);
 	}
 
-	@RequestMapping(value="/resources/{id}", method=RequestMethod.GET)
+	@RequestMapping(value=RELATIVE_PATH+"/{id}", method=RequestMethod.GET)
 	public ResponseEntity<Resource> getResource(@PathVariable("id") Long id) {
 		Resource r = resourceService.getResource(id);
 		if (r == null) {

@@ -55,7 +55,7 @@ public class ResourceControllerTest {
 		.thenReturn(mockResources);
 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders
-				.get("/resources")
+				.get(ResourceController.RELATIVE_PATH)
 				.accept(MediaType.APPLICATION_JSON);
 
 		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
@@ -70,7 +70,7 @@ public class ResourceControllerTest {
 		.thenReturn(mockResource1);
 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders
-				.get("/resources/" + mockResource1.getId())
+				.get(ResourceController.RELATIVE_PATH + "/" + mockResource1.getId())
 				.accept(MediaType.APPLICATION_JSON);
 
 		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
@@ -89,7 +89,7 @@ public class ResourceControllerTest {
 		.thenReturn(null);
 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders
-				.get("/resources/" + unknownId)
+				.get(ResourceController.RELATIVE_PATH + "/" + unknownId)
 				.accept(MediaType.APPLICATION_JSON);
 
 		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
