@@ -26,16 +26,17 @@ public class ResourceService {
 	}
 
 	/*
-	 * Return list of resources.
-	 * Return empty list if no resources.
+	 * Returns list of resources. Returns empty list if no resources.
 	 */
 	public List<Resource> getResources() {
 		return allResources;
 	}
 
 	/*
-	 * Return resource object, given the id of the resource.
-	 * Return null if id not found.
+	 * Returns resource object, given the id of the resource. Returns null if id not found.
+	 *
+	 * @param id the id of the resource
+	 * @return the retrieved resource object, or null if not found
 	 */
 	public Resource getResource(Long id) {
 		for (Resource r : allResources) {
