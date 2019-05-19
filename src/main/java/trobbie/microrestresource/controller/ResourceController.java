@@ -25,7 +25,7 @@ public class ResourceController {
 	@Autowired
 	private ResourceService resourceService;
 
-	/*
+	/**
 	 * Returns list of retrieved resources.
 	 *
 	 * @return the HTTP representation of the list of retrieved resources
@@ -35,7 +35,7 @@ public class ResourceController {
 		return new ResponseEntity<List<Resource>>(resourceService.getResources(), HttpStatus.OK);
 	}
 
-	/*
+	/**
 	 * Returns the retrieved resource.
 	 *
 	 * @param id the id of the specified resource
@@ -51,7 +51,7 @@ public class ResourceController {
 		return new ResponseEntity<Resource>(r, HttpStatus.OK);
 	}
 
-	/*
+	/**
 	 * Replaces the given resource, given the resource in the request body.  If resource id is not found,
 	 * return 400 Bad Request.
 	 *
