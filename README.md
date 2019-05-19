@@ -5,9 +5,9 @@ This starter project is an example of how to provide a RESTful microservice for 
 - Package Manager: Gradle
 - Version Control: Git
 - IoC: Spring Boot
-- Authenticity and security: HTTPS and OAuth2
 - Testing: JUnit and Mockito
-- DevTools: CircleCI
+- *DevTools: CircleCI [**FUTURE TASK**]*
+- *Authenticity and security: HTTPS and OAuth2 [**FUTURE TASK**]*
 - IDE: Eclipse (but could use any IDE)
 
 ## Getting Started
@@ -19,6 +19,7 @@ These instructions will get you a copy of the project up and running on your loc
 You need the following installed locally:
 - JDK 8
 - Git
+- Gradle
 
 ### Installing (as is, before customizing)
 
