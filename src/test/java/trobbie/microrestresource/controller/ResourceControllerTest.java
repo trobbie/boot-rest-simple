@@ -53,8 +53,8 @@ public class ResourceControllerTest {
 	public ResourceControllerTest() {
 		this.mockResourceSetEmpty = new ArrayList<Resource>();
 
-		this.mockResource1 = new Resource(1, "MockResource1");
-		this.mockResource2 = new Resource(2, "MockResource2");
+		this.mockResource1 = new Resource(1L, "MockResource1");
+		this.mockResource2 = new Resource(2L, "MockResource2");
 
 		this.mockResourceSetA = new ArrayList<Resource>();
 		this.mockResourceSetA.add(this.mockResource1);

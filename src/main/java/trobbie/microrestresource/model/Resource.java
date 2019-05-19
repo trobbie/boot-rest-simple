@@ -4,15 +4,16 @@ package trobbie.microrestresource.model;
  * @author Trevor Robbie
  *
  */
-public class Resource {
+public class Resource implements Identifiable<Long> {
 
-	private long id;
+	private Long id;
 	private String name;
 
 	public Resource() {
 	}
 
-	public Resource(long id, String name) {
+
+	public Resource(Long id, String name) {
 		this.id = id;
 		this.name = name;
 	}
@@ -20,14 +21,16 @@ public class Resource {
 	/**
 	 * @return the id
 	 */
-	public long getId() {
+	@Override
+	public Long getId() {
 		return id;
 	}
 
 	/**
 	 * @param id the id to set
 	 */
-	public void setId(long id) {
+	@Override
+	public void setId(Long id) {
 		this.id = id;
 	}
 
