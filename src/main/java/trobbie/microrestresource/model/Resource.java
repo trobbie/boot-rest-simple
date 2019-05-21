@@ -1,53 +1,21 @@
 package trobbie.microrestresource.model;
 
 /**
+ * Interface for the resource model.  Implement the ID and any additional fields.
+ *
  * @author Trevor Robbie
  *
  */
-public class Resource implements Identifiable<Long> {
-
-	private Long id;
-	private String name;
-
-	public Resource() {
-	}
-
-
-	public Resource(Long id, String name) {
-		this.id = id;
-		this.name = name;
-	}
+public interface Resource<ID> {
 
 	/**
 	 * @return the id
 	 */
-	@Override
-	public Long getId() {
-		return id;
-	}
+	public ID getId();
 
 	/**
 	 * @param id the id to set
 	 */
-	@Override
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	/**
-	 * @return the name
-	 */
-	public String getName() {
-		return name;
-	}
-
-	/**
-	 * @param name the name to set
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
-
+	public void setId(ID id);
 
 }
-
