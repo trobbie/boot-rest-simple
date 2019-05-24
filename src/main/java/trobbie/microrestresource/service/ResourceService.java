@@ -1,7 +1,5 @@
 package trobbie.microrestresource.service;
 
-import java.util.List;
-
 import org.springframework.stereotype.Component;
 
 import trobbie.microrestresource.model.Resource;
@@ -16,9 +14,9 @@ import trobbie.microrestresource.model.Resource;
 public interface ResourceService<T extends Resource, ID> {
 
 	/**
-	 * Returns list of resources. Returns empty list if no resources.
+	 * Returns iterable of resources. Returns empty list if no resources.
 	 */
-	public List<T> getResources();
+	public Iterable<T> getResources();
 
 	/**
 	 * Returns resource object, given the id of the resource. Returns null if id not found.
