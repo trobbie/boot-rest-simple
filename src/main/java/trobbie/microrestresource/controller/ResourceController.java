@@ -26,7 +26,7 @@ public interface ResourceController<T extends Resource, ID> {
 	 *
 	 * @return the HTTP representation of the list of retrieved resources
 	 */
-	public ResponseEntity<List<T>> getResources();
+	public ResponseEntity<Iterable<T>> getResources();
 
 	/**
 	 * Returns the retrieved resource.  Representation is as a single resource, not in array form.

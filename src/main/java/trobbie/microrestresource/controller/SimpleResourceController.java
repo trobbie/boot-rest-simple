@@ -1,7 +1,5 @@
 package trobbie.microrestresource.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,13 +21,13 @@ import trobbie.microrestresource.service.SimpleResourceService;
 public class SimpleResourceController implements ResourceController<SimpleResource, Long> {
 	static public final String RELATIVE_PATH = "/resources";
 
-	@Autowired
+	@Autowired  // mark as being injected (wired by type)
 	private SimpleResourceService resourceService;
 
 	@Override
 	@RequestMapping(value=RELATIVE_PATH, method=RequestMethod.GET)
-	public ResponseEntity<List<SimpleResource>> getResources() {
-		return new ResponseEntity<List<SimpleResource>>(resourceService.getResources(), HttpStatus.OK);
+	public ResponseEntity<Iterable<SimpleResource>> getResources() {
+		return new ResponseEntity<Iterable<SimpleResource>>(resourceService.getResources(), HttpStatus.OK);
 	}
 
 	@Override

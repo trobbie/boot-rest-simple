@@ -1,8 +1,8 @@
 package trobbie.microrestresource.service;
 
-import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import trobbie.microrestresource.dao.SimpleResourceRepository;
@@ -17,10 +17,11 @@ import trobbie.microrestresource.model.SimpleResource;
 @Component
 public class SimpleResourceService implements ResourceService<SimpleResource, Long>{
 
+	@Autowired  // mark as being injected (wired by type)
 	private SimpleResourceRepository resourcesRepository;
 
 	@Override
-	public List<SimpleResource> getResources() {
+	public Iterable<SimpleResource> getResources() {
 		return resourcesRepository.findAll();
 	}
 
