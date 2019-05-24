@@ -8,13 +8,19 @@
 package trobbie.microrestresource.dao;
 
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.NoRepositoryBean;
 
 import trobbie.microrestresource.model.Resource;
 
 /**
- * @author Trevor Robbie
+ * Interface for resource's repository.  Specify SpringBoot's @repository annotation
+ * on the interface extending this one.
  *
+ * CRUD refers Create, Read, Update, Delete.
+ *
+ * @author Trevor Robbie
  */
+@NoRepositoryBean
 public interface ResourceRepository<T extends Resource, ID> extends CrudRepository<T, ID> {
 
 }
