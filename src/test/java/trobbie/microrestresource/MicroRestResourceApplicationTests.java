@@ -11,6 +11,7 @@ public class MicroRestResourceApplicationTests {
 
 	@Test
 	public void contextLoads() {
+		// this empty function just tests to see if startup does not throw an exception
 	}
 
 }
