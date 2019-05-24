@@ -20,7 +20,7 @@ import trobbie.microrestresource.model.Resource;
  *
  * @author Trevor Robbie
  */
-@NoRepositoryBean
+@NoRepositoryBean  // exclude from being picked up and thus having an instance created for this intermediate interface
 public interface ResourceRepository<T extends Resource, ID> extends CrudRepository<T, ID> {
 
 }
