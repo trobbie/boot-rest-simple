@@ -12,6 +12,8 @@ import trobbie.microrestresource.model.Resource;
 /**
  * Interface for REST controller intended to forward web requests to ResourceService layer.
  *
+ * Responses are sent in JSON format.
+ *
  * @author Trevor Robbie
  *
  */
@@ -27,7 +29,7 @@ public interface ResourceController<T extends Resource, ID> {
 	public ResponseEntity<List<T>> getResources();
 
 	/**
-	 * Returns the retrieved resource.
+	 * Returns the retrieved resource.  Representation is as a single resource, not in array form.
 	 *
 	 * @param id the id of the specified resource
 	 * @return the HTTP representation of the retrieved resource, identified by the specified id, or an HTTP
