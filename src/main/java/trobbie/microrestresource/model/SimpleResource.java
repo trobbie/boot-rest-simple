@@ -1,14 +1,22 @@
 package trobbie.microrestresource.model;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
 /**
  * Implements a resource having ID's of Long type, and an additional Name field.
  *
  * @author Trevor Robbie
  *
  */
+@Entity // designating a JPA entity (w/o @Table, assumed mapped to table of same name as class)
 public class SimpleResource implements Resource<Long> {
 
+	@Id // JPA can now recognize this as entity's ID
+	@GeneratedValue
 	private Long id;
+
 	private String name;
 
 	public SimpleResource() {
@@ -49,6 +57,15 @@ public class SimpleResource implements Resource<Long> {
 		this.name = name;
 	}
 
+	/**
+	 * provides string format of the object's state
+	 */
+	@Override
+	public String toString() {
+		return String.format(
+				"SimpleResource[id=%d, name='%s']",
+				id, name);
+	}
 
 }
 
