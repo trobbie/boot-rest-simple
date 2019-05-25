@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
  * @author Trevor Robbie
  *
  */
-@Configuration
+@Configuration // denotes class as having @Bean definitions used to configure
 @ComponentScan("trobbie.microrestresource")
 public class AppConfig {
 
