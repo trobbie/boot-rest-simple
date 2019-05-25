@@ -11,7 +11,8 @@ public class MicroRestResourceApplicationTests {
 
 	@Test
 	public void contextLoads() {
-		// this empty function just tests to see if startup does not throw an exception
+		// this empty function just tests to see if startup throws an exception
+		// e.g. dataSource UnsatisfiedDependencyException if a repository implementation not found on the classpath
 	}
 
 }

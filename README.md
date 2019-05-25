@@ -35,11 +35,16 @@ gradlew build
 ```
 gradlew eclipse
 ```
-4) To run the embedded Tomcat service that comes with Spring Boot, run the following:
+4) To run the embedded Tomcat service and in-memory H2 database, run the following:
 ```
 gradlew bootRun
 ```
-5) To test the web service, use browser and navigate to the resource URL:
+To access/add data directly (without using the REST API), navigate to the following:
+```
+http://localhost:8080/h2-console
+```
+Ensure JDBC URL is "jdbc:h2:mem:resourcedb" before connecting.
+5) To access data through REST API, navigate to the resource URL:
 ```
 http://localhost:8080/resources
 ```
