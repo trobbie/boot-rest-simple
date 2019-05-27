@@ -20,20 +20,21 @@ import trobbie.microrestresource.service.SimpleResourceService;
  */
 
 @RestController
+@RequestMapping(value = SimpleResourceController.RELATIVE_PATH)
 public class SimpleResourceController implements ResourceController<SimpleResource, Long> {
-	static public final String RELATIVE_PATH = "/resources";
+	public static final String RELATIVE_PATH = "/v1/resources";
 
 	@Autowired  // mark as being injected (wired by type)
 	private SimpleResourceService resourceService;
 
 	@Override
-	@RequestMapping(value=RELATIVE_PATH, method=RequestMethod.GET)
+	@RequestMapping(value="", method=RequestMethod.GET)
 	public ResponseEntity<Iterable<SimpleResource>> getResources() {
 		return new ResponseEntity<Iterable<SimpleResource>>(resourceService.getResources(), HttpStatus.OK);
 	}
 
 	@Override
-	@RequestMapping(value=RELATIVE_PATH+"/{id}", method=RequestMethod.GET)
+	@RequestMapping(value="/{id}", method=RequestMethod.GET)
 	public ResponseEntity<SimpleResource> getResource(@PathVariable("id") Long id) {
 		Optional<SimpleResource> r = resourceService.getResource(id);
 		if (r.isPresent())
@@ -43,7 +44,7 @@ public class SimpleResourceController implements ResourceController<SimpleResour
 	}
 
 	@Override
-	@RequestMapping(value=RELATIVE_PATH+"/{id}", method=RequestMethod.PUT)
+	@RequestMapping(value="/{id}", method=RequestMethod.PUT)
 	public ResponseEntity<SimpleResource> replaceResource(@PathVariable("id") Long id, @RequestBody SimpleResource givenResource) {
 
 		// The givenResource param must be converted from JSON.  Thanks to Spring’s HTTP
