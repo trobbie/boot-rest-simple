@@ -31,8 +31,9 @@ public class SimpleResourceService implements ResourceService<SimpleResource, Lo
 	}
 
 	@Override
-	public SimpleResource replaceResource(SimpleResource specifiedResource) {
-		return resourcesRepository.save(specifiedResource);
+	public Optional<SimpleResource> replaceResource(SimpleResource specifiedResource) {
+		if (specifiedResource == null) return Optional.empty();
+		return Optional.of(resourcesRepository.save(specifiedResource));
 	}
 
 }

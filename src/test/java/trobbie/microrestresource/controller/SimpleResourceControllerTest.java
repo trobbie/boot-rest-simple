@@ -155,7 +155,7 @@ public class SimpleResourceControllerTest {
 
 		mockResource2.setName("MockResource2update");
 		Mockito.when(resourceService.replaceResource(ArgumentMatchers.any(SimpleResource.class)))
-		.thenReturn(mockResource2);
+		.thenReturn(Optional.of(mockResource2));
 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders
 				.put(SimpleResourceController.RELATIVE_PATH + "/" + mockResource2.getId())
@@ -176,7 +176,7 @@ public class SimpleResourceControllerTest {
 	public void replaceResource_RequestIdNotFound_Return400BadRequest() throws Exception {
 
 		Mockito.when(resourceService.replaceResource(mockResource2))
-		.thenReturn(null);
+		.thenReturn(Optional.empty());
 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders
 				.put(SimpleResourceController.RELATIVE_PATH + "/" + mockResource2.getId())
@@ -195,7 +195,7 @@ public class SimpleResourceControllerTest {
 
 		// should not call service layer at all
 		Mockito.when(resourceService.replaceResource(mockResource2))
-		.thenReturn(null);
+		.thenReturn(Optional.empty());
 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders
 				.put(SimpleResourceController.RELATIVE_PATH + "/" + mockResource1.getId())

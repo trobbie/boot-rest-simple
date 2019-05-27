@@ -31,14 +31,15 @@ public interface ResourceService<T extends Resource, ID> {
 
 	/**
 	 * Replaces the resource object at the specified resource's id.  If resource's id does not already
-	 * exist, then return null.
+	 * exist, then return an empty {@code Optional}.
 	 *
 	 * <p> Note: this method must be idempotent.
 	 * <p> Note: if only certain fields are to be updated (e.g. HTTP method: PATCH), use another method.
 	 *
 	 * @param specifiedResource the resource containing the new values
-	 * @return the replaced resource object, or null if id could not be found
+	 * @return an {@code Optional} of the replaced resource object; if resource id was not found, return
+	 * an empty {@code Optional}
 	 */
-	public T replaceResource(T specifiedResource);
+	public Optional<T> replaceResource(T specifiedResource);
 
 }

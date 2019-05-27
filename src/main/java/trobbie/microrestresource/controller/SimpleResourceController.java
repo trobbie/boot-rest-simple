@@ -56,13 +56,15 @@ public class SimpleResourceController implements ResourceController<SimpleResour
 			return new ResponseEntity<SimpleResource>(HttpStatus.BAD_REQUEST);
 		}
 
-		SimpleResource r = resourceService.replaceResource(givenResource);
-		if (r == null) {
+		Optional<SimpleResource> r = resourceService.replaceResource(givenResource);
+		if (r.isPresent()) {
+			return new ResponseEntity<SimpleResource>(r.get(), HttpStatus.OK);
+		} else {
 			// since client used invalid id for a replace request, the request itself is considered bad,
 			// i.e. not simply a 404 Not Found.
 			return new ResponseEntity<SimpleResource>(HttpStatus.BAD_REQUEST);
 		}
-		return new ResponseEntity<SimpleResource>(r, HttpStatus.OK);
+
 	}
 
 }
