@@ -1,5 +1,7 @@
 package trobbie.microrestresource.service;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Component;
 
 import trobbie.microrestresource.model.Resource;
@@ -19,12 +21,13 @@ public interface ResourceService<T extends Resource, ID> {
 	public Iterable<T> getResources();
 
 	/**
-	 * Returns resource object, given the id of the resource. Returns null if id not found.
+	 * Returns an {@code Optional} describing a resource object, given the id of the resource.
 	 *
 	 * @param id the id of the resource
-	 * @return the retrieved resource object, or null if not found
+	 * @return an {@code Optional} with value of the retrieved resource object; if not found, returns
+	 * an empty {@code Optional}
 	 */
-	public T getResource(ID id);
+	public Optional<T> getResource(ID id);
 
 	/**
 	 * Replaces the resource object at the specified resource's id.  If resource's id does not already

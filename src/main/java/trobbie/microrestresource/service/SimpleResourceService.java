@@ -26,12 +26,8 @@ public class SimpleResourceService implements ResourceService<SimpleResource, Lo
 	}
 
 	@Override
-	public SimpleResource getResource(Long id) {
-		Optional<SimpleResource> result = resourcesRepository.findById(id);
-		if (result.isPresent())
-			return result.get();
-		else
-			return null;
+	public Optional<SimpleResource> getResource(Long id) {
+		return resourcesRepository.findById(id);
 	}
 
 	@Override

@@ -1,5 +1,7 @@
 package trobbie.microrestresource.controller;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,11 +35,11 @@ public class SimpleResourceController implements ResourceController<SimpleResour
 	@Override
 	@RequestMapping(value=RELATIVE_PATH+"/{id}", method=RequestMethod.GET)
 	public ResponseEntity<SimpleResource> getResource(@PathVariable("id") Long id) {
-		SimpleResource r = resourceService.getResource(id);
-		if (r == null) {
+		Optional<SimpleResource> r = resourceService.getResource(id);
+		if (r.isPresent())
+			return new ResponseEntity<SimpleResource>(r.get(), HttpStatus.OK);
+		else
 			return new ResponseEntity<SimpleResource>(HttpStatus.NOT_FOUND);
-		}
-		return new ResponseEntity<SimpleResource>(r, HttpStatus.OK);
 	}
 
 	@Override

@@ -5,6 +5,7 @@ package trobbie.microrestresource.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -101,7 +102,7 @@ public class SimpleResourceControllerTest {
 	public void getResource_IdFound_ReturnResource() throws Exception {
 
 		Mockito.when(resourceService.getResource(mockResource1.getId()))
-		.thenReturn(mockResource1);
+		.thenReturn(Optional.of(mockResource1));
 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders
 				.get(SimpleResourceController.RELATIVE_PATH + "/" + mockResource1.getId())
@@ -121,7 +122,7 @@ public class SimpleResourceControllerTest {
 
 		Long unknownId = 99999L;
 		Mockito.when(resourceService.getResource(unknownId))
-		.thenReturn(null);
+		.thenReturn(Optional.empty());
 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders
 				.get(SimpleResourceController.RELATIVE_PATH + "/" + unknownId)
