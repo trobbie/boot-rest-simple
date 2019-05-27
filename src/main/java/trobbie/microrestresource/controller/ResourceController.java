@@ -1,7 +1,5 @@
 package trobbie.microrestresource.controller;
 
-import java.util.List;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -40,6 +38,10 @@ public interface ResourceController<T extends Resource, ID> {
 	/**
 	 * Replaces the given resource, given the resource in the request body.  If resource id is not found,
 	 * return 400 Bad Request.
+	 *
+	 * This returns the resource that was just updated, containing values given from the repository.
+	 * Debatably, we could return 204 (No Content), but this interface allows certain fields to be
+	 * calculated server-side (e.g. an exact dateCreated, dateModified, etc.).
 	 *
 	 * @param id      the id of the entity to update
 	 * @param entity  the entity values with which to update. Entity's ID must match id of path variable.
