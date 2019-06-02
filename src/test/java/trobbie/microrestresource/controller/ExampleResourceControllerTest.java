@@ -26,8 +26,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import trobbie.microrestresource.model.SimpleResource;
-import trobbie.microrestresource.service.SimpleResourceService;
+import trobbie.microrestresource.model.ExampleResource;
+import trobbie.microrestresource.service.DefaultResourceService;
 
 
 /**
@@ -38,29 +38,30 @@ import trobbie.microrestresource.service.SimpleResourceService;
  */
 @RunWith(SpringRunner.class)
 @WebMvcTest(value = ResourceController.class)
-public class SimpleResourceControllerTest {
+public class ExampleResourceControllerTest {
 
 	@Autowired
 	private MockMvc mockMvc;
 
 	@MockBean
-	private SimpleResourceService resourceService;
+	private DefaultResourceService<ExampleResource, Long> resourceService;
 
-	private List<SimpleResource> mockResourceSetEmpty;
-	private List<SimpleResource> mockResourceSetA;
-	private SimpleResource mockResource1;
-	private SimpleResource mockResource2;
+	private List<ExampleResource> mockResourceSetEmpty;
+	private List<ExampleResource> mockResourceSetA;
+	private ExampleResource mockResource1;
+	private ExampleResource mockResource2;
 
-	public SimpleResourceControllerTest() {
-		this.mockResourceSetEmpty = new ArrayList<SimpleResource>();
+	public ExampleResourceControllerTest() {
+		this.mockResourceSetEmpty = new ArrayList<ExampleResource>();
 
-		this.mockResource1 = new SimpleResource(1L, "MockResource1");
-		this.mockResource2 = new SimpleResource(2L, "MockResource2");
+		this.mockResource1 = new ExampleResource(1L, "MockResource1");
+		this.mockResource2 = new ExampleResource(2L, "MockResource2");
 
-		this.mockResourceSetA = new ArrayList<SimpleResource>();
+		this.mockResourceSetA = new ArrayList<ExampleResource>();
 		this.mockResourceSetA.add(this.mockResource1);
 		this.mockResourceSetA.add(this.mockResource2);
 	}
+
 
 	@Test
 	public void getResources_RequestedOnEmptyData_ReturnEmptyList() throws Exception {
@@ -69,7 +70,7 @@ public class SimpleResourceControllerTest {
 		.thenReturn(mockResourceSetEmpty);
 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders
-				.get(SimpleResourceController.RELATIVE_PATH)
+				.get(DefaultResourceController.RELATIVE_PATH)
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8");
 
@@ -87,7 +88,7 @@ public class SimpleResourceControllerTest {
 		.thenReturn(mockResourceSetA);
 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders
-				.get(SimpleResourceController.RELATIVE_PATH)
+				.get(DefaultResourceController.RELATIVE_PATH)
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8");
 
@@ -101,11 +102,11 @@ public class SimpleResourceControllerTest {
 	@Test
 	public void getResource_IdFound_ReturnResource() throws Exception {
 
-		Mockito.when(resourceService.getResource(mockResource1.getId()))
+		Mockito.when(resourceService.getResource(Mockito.any()))
 		.thenReturn(Optional.of(mockResource1));
 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders
-				.get(SimpleResourceController.RELATIVE_PATH + "/" + mockResource1.getId())
+				.get(DefaultResourceController.RELATIVE_PATH + "/" + mockResource1.getId())
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8");
 
@@ -121,11 +122,11 @@ public class SimpleResourceControllerTest {
 	public void getResource_IdUnknown_Return404NotFound() throws Exception {
 
 		Long unknownId = 99999L;
-		Mockito.when(resourceService.getResource(unknownId))
+		Mockito.when(resourceService.getResource(Mockito.any()))
 		.thenReturn(Optional.empty());
 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders
-				.get(SimpleResourceController.RELATIVE_PATH + "/" + unknownId)
+				.get(DefaultResourceController.RELATIVE_PATH + "/" + unknownId)
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8");
 
@@ -137,11 +138,11 @@ public class SimpleResourceControllerTest {
 	@Test
 	public void getResource_StringIdRequested_Return400BadRequest() throws Exception {
 
-		Mockito.when(resourceService.getResource(Mockito.anyLong()))
+		Mockito.when(resourceService.getResource(Mockito.any()))
 		.thenThrow(RuntimeException.class);
 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders
-				.get(SimpleResourceController.RELATIVE_PATH + "/stringtest")
+				.get(DefaultResourceController.RELATIVE_PATH + "/stringtest")
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8");
 
@@ -154,11 +155,11 @@ public class SimpleResourceControllerTest {
 	public void replaceResource_Requested_ReturnSameResource() throws Exception {
 
 		mockResource2.setName("MockResource2update");
-		Mockito.when(resourceService.replaceResource(ArgumentMatchers.any(SimpleResource.class)))
+		Mockito.when(resourceService.replaceResource(ArgumentMatchers.any(ExampleResource.class)))
 		.thenReturn(Optional.of(mockResource2));
 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders
-				.put(SimpleResourceController.RELATIVE_PATH + "/" + mockResource2.getId())
+				.put(DefaultResourceController.RELATIVE_PATH + "/" + mockResource2.getId())
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8")
@@ -175,11 +176,11 @@ public class SimpleResourceControllerTest {
 	@Test
 	public void replaceResource_RequestIdNotFound_Return400BadRequest() throws Exception {
 
-		Mockito.when(resourceService.replaceResource(mockResource2))
+		Mockito.when(resourceService.replaceResource(ArgumentMatchers.any(ExampleResource.class)))
 		.thenReturn(Optional.empty());
 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders
-				.put(SimpleResourceController.RELATIVE_PATH + "/" + mockResource2.getId())
+				.put(DefaultResourceController.RELATIVE_PATH + "/" + mockResource2.getId())
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8")
@@ -198,7 +199,7 @@ public class SimpleResourceControllerTest {
 		.thenReturn(Optional.empty());
 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders
-				.put(SimpleResourceController.RELATIVE_PATH + "/" + mockResource1.getId())
+				.put(DefaultResourceController.RELATIVE_PATH + "/" + mockResource1.getId())
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8")

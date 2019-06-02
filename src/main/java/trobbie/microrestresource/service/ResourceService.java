@@ -2,8 +2,6 @@ package trobbie.microrestresource.service;
 
 import java.util.Optional;
 
-import org.springframework.stereotype.Component;
-
 import trobbie.microrestresource.model.Resource;
 
 /**
@@ -12,8 +10,15 @@ import trobbie.microrestresource.model.Resource;
  * @author Trevor Robbie
  *
  */
-@Component
 public interface ResourceService<T extends Resource, ID> {
+
+	/**
+	 * Converter function from String (resource id from URI path) to ID's type.
+	 *
+	 * @param idString the resource id string from URI path
+	 * @return the id with type ID
+	 */
+	public ID stringToIDConverter(String idString);
 
 	/**
 	 * Returns iterable of resources. Returns empty list if no resources.
@@ -27,7 +32,7 @@ public interface ResourceService<T extends Resource, ID> {
 	 * @return an {@code Optional} with value of the retrieved resource object; if not found, returns
 	 * an empty {@code Optional}
 	 */
-	public Optional<T> getResource(ID id);
+	public Optional<T> getResource(String id);
 
 	/**
 	 * Replaces the resource object at the specified resource's id.  If resource's id does not already

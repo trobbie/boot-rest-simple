@@ -11,7 +11,7 @@ import javax.persistence.Id;
  *
  */
 @Entity // designating a JPA entity (w/o @Table, assumed mapped to table of same name as class)
-public class SimpleResource implements Resource<Long> {
+public class ExampleResource implements Resource<Long> {
 
 	@Id // JPA can now recognize this as entity's ID
 	@GeneratedValue
@@ -19,10 +19,10 @@ public class SimpleResource implements Resource<Long> {
 
 	private String name;
 
-	public SimpleResource() {
+	public ExampleResource() {
 	}
 
-	public SimpleResource(Long id, String name) {
+	public ExampleResource(Long id, String name) {
 		this.id = id;
 		this.name = name;
 	}

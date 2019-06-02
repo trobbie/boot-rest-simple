@@ -9,18 +9,20 @@ package trobbie.microrestresource.dao;
 
 import org.springframework.stereotype.Repository;
 
-import trobbie.microrestresource.model.SimpleResource;
+import trobbie.microrestresource.model.ExampleResource;
 
 /**
- * Interface used by SpringBoot's repository annotation.
+ * Interface used as SpringBoot's repository.  For SpringBoot to autowire, 
+ * this interface needs to be defined extending the CRUDRepository with the
+ * specific model used (Resource subclass) and @Repository assigned.
  *
- * Implementation configuration in spring.datasource in application.properties)
+ * Implementation configuration found in spring.datasource in application.properties.
  *
  * @author Trevor Robbie
  *
  */
-@Repository
-public interface SimpleResourceRepository extends ResourceRepository<SimpleResource, Long> {
+@Repository // assign as JPA Repository
+public interface ExampleResourceRepository extends ResourceRepository<ExampleResource, Long> {
 	// No need to write implementation. Spring Data JPA creates it for us on the fly,
 	// based on what implementation is found on the classpath.
 }

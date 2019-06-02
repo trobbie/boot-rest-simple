@@ -3,12 +3,14 @@ package trobbie.microrestresource.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
 
 import trobbie.microrestresource.model.Resource;
 
 /**
  * Interface for REST controller intended to forward web requests to ResourceService layer.
+ *
+ * The ID is always interpreted as a String from the Path.  The REST service layer defines a
+ * converter to the resource's ID type when implementing the interface.
  *
  * Responses are sent in JSON format.
  *
@@ -16,7 +18,6 @@ import trobbie.microrestresource.model.Resource;
  *
  */
 
-@RestController
 public interface ResourceController<T extends Resource, ID> {
 
 	/**
@@ -33,11 +34,11 @@ public interface ResourceController<T extends Resource, ID> {
 	 * @return the HTTP representation of the retrieved resource, identified by the specified id, or an HTTP
 	 * 		response of status code 404 if not found.
 	 */
-	public ResponseEntity<T> getResource(@PathVariable("id") ID id);
+	public ResponseEntity<T> getResource(@PathVariable("id") String id);
 
 	/**
 	 * Replaces the given resource, given the resource in the request body.  If resource id is not found,
-	 * return 400 Bad Request.
+	 * return 400 Bad Request.  If resource_id is not a valid id type, return 404 Not Found.
 	 *
 	 * This returns the resource that was just updated, containing values given from the repository.
 	 * Debatably, we could return 204 (No Content), but this interface allows certain fields to be
@@ -49,6 +50,6 @@ public interface ResourceController<T extends Resource, ID> {
 	 * 		of BadRequest.  If specified id does not match givenResource's id, return response code of
 	 * 		BadRequest.
 	 */
-	public ResponseEntity<T> replaceResource(@PathVariable("id") ID id, @RequestBody T givenResource);
+	public ResponseEntity<T> replaceResource(@PathVariable("id") String id, @RequestBody T givenResource);
 
 }
