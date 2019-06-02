@@ -152,7 +152,7 @@ public class ExampleResourceControllerTest {
 	}
 
 	@Test
-	public void replaceResource_Requested_ReturnSameResource() throws Exception {
+	public void upsertResource_Requested_ReturnSameResource() throws Exception {
 
 		mockResource2.setName("MockResource2update");
 		Mockito.when(resourceService.saveResource(ArgumentMatchers.any(ExampleResource.class)))
@@ -174,7 +174,7 @@ public class ExampleResourceControllerTest {
 	}
 
 	@Test
-	public void replaceResource_RequestIdNotFound_Return400BadRequest() throws Exception {
+	public void upsertResource_RequestIdNotFound_Return400BadRequest() throws Exception {
 
 		Mockito.when(resourceService.saveResource(ArgumentMatchers.any(ExampleResource.class)))
 		.thenReturn(Optional.empty());
@@ -192,7 +192,7 @@ public class ExampleResourceControllerTest {
 	}
 
 	@Test
-	public void replaceResource_IdMismatch_Return400BadRequest() throws Exception {
+	public void upsertResource_IdMismatch_Return400BadRequest() throws Exception {
 
 		// should not call service layer at all
 		Mockito.when(resourceService.saveResource(mockResource2))
