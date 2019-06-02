@@ -18,7 +18,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	
 	// adding H2 here as an in-memory repository implementation
-	// TODO: change this to your database solution
+	// STARTER-TODO: change this to your database solution
 	implementation("com.h2database:h2")
 	
 //	implementation 'org.springframework.boot:spring-boot-starter-data-rest'
