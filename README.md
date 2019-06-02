@@ -10,6 +10,21 @@ This starter project is an example of how to provide a RESTful microservice for 
 - *Authenticity and security: HTTPS and OAuth2 [**FUTURE TASK**]*
 - IDE: Eclipse (but could use any IDE)
 
+# REST API Implementation
+Every REST implementation has its nuances.  I have tried to stick to best practices.  Below should identify the subjective distinctions of the implementation. 
+
+| General  |  |
+| ------------- |:-------------:|
+| Root URI: | http://localhost:8080/v1 |
+| Resource name: | resources |
+| Representation format: | JSON (requests and responses) |
+
+| HTTP Method  | URI (relative) | Implementation Distinctions  | Request  | Response  |
+| ------------- |:-------------:|:-------------:|:------:|:------:|
+| GET | /resources| Get all resources [**FUTURE TASK: add filtering, pagination, etc.**]) | Empty body | ***200 OK***: Array of resources |
+| GET | /resources/:id | Get resource identified by id (Standard)| Empty body | ***200 OK***: Resource |
+| PUT | /resources/:id | Replace resource identified by id | Resource | ***200 OK*** (on update) or ***201 CREATED*** (on insert): Same resource but some fields are allowed to have been changed server-side, e.g. dateModified |
+
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
