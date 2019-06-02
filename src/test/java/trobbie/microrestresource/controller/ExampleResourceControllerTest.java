@@ -148,13 +148,14 @@ public class ExampleResourceControllerTest {
 
 		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 		Assert.assertEquals(HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus());
-
 	}
 
 	@Test
 	public void upsertResource_Requested_ReturnSameResource() throws Exception {
 
 		mockResource2.setName("MockResource2update");
+		Mockito.when(resourceService.getResource(mockResource2.getId().toString()))
+		.thenReturn(Optional.of(mockResource2));
 		Mockito.when(resourceService.saveResource(ArgumentMatchers.any(ExampleResource.class)))
 		.thenReturn(Optional.of(mockResource2));
 
@@ -170,33 +171,16 @@ public class ExampleResourceControllerTest {
 		String expected = asJsonString(mockResource2);
 		Assert.assertEquals(HttpStatus.OK.value(), result.getResponse().getStatus());
 		JSONAssert.assertEquals(expected, result.getResponse().getContentAsString(), false);
-
-	}
-
-	@Test
-	public void upsertResource_RequestIdNotFound_Return400BadRequest() throws Exception {
-
-		Mockito.when(resourceService.saveResource(ArgumentMatchers.any(ExampleResource.class)))
-		.thenReturn(Optional.empty());
-
-		RequestBuilder requestBuilder = MockMvcRequestBuilders
-				.put(DefaultResourceController.RELATIVE_PATH + "/" + mockResource2.getId())
-				.contentType(MediaType.APPLICATION_JSON)
-				.accept(MediaType.APPLICATION_JSON)
-				.characterEncoding("UTF-8")
-				.content(asJsonString(mockResource2));
-
-		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
-
-		Assert.assertEquals(HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus());
 	}
 
 	@Test
 	public void upsertResource_IdMismatch_Return400BadRequest() throws Exception {
 
 		// should not call service layer at all
-		Mockito.when(resourceService.saveResource(mockResource2))
-		.thenReturn(Optional.empty());
+		Mockito.when(resourceService.getResource(ArgumentMatchers.any()))
+		.thenThrow(new RuntimeException());
+		Mockito.when(resourceService.saveResource(ArgumentMatchers.any()))
+		.thenThrow(new RuntimeException());
 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders
 				.put(DefaultResourceController.RELATIVE_PATH + "/" + mockResource1.getId())
@@ -208,7 +192,68 @@ public class ExampleResourceControllerTest {
 		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 
 		Assert.assertEquals(HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus());
+	}
 
+	@Test
+	public void upsertResource_RequestWithEmptyBody_Return400BadRequest() throws Exception {
+
+		// should not call service layer at all
+		Mockito.when(resourceService.getResource(ArgumentMatchers.any()))
+		.thenThrow(new RuntimeException());
+		Mockito.when(resourceService.saveResource(ArgumentMatchers.any()))
+		.thenThrow(new RuntimeException());
+
+		RequestBuilder requestBuilder = MockMvcRequestBuilders
+				.put(DefaultResourceController.RELATIVE_PATH + "/" + mockResource2.getId())
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.content("");
+
+		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+		Assert.assertEquals(HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus());
+	}
+
+	@Test
+	public void upsertResource_RequestWithInvalidBody_Return400BadRequest() throws Exception {
+
+		// should not call service layer at all
+		Mockito.when(resourceService.getResource(ArgumentMatchers.any()))
+		.thenThrow(new RuntimeException());
+		Mockito.when(resourceService.saveResource(ArgumentMatchers.any()))
+		.thenThrow(new RuntimeException());
+
+		RequestBuilder requestBuilder = MockMvcRequestBuilders
+				.put(DefaultResourceController.RELATIVE_PATH + "/" + mockResource2.getId())
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.content("[_id='invalidentity'");
+
+		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+		Assert.assertEquals(HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus());
+	}
+
+	@Test
+	public void upsertResource_RequestNewResource_Return201Created() throws Exception {
+
+		Mockito.when(resourceService.getResource(mockResource2.getId().toString()))
+		.thenReturn(Optional.empty());
+		Mockito.when(resourceService.saveResource(ArgumentMatchers.any(ExampleResource.class)))
+		.thenReturn(Optional.of(mockResource2));
+
+		RequestBuilder requestBuilder = MockMvcRequestBuilders
+				.put(DefaultResourceController.RELATIVE_PATH + "/" + mockResource2.getId())
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.content(asJsonString(mockResource2));
+
+		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+		Assert.assertEquals(HttpStatus.CREATED.value(), result.getResponse().getStatus());
 	}
 
 	private static String asJsonString(final Object obj) {

@@ -58,7 +58,7 @@ public class DefaultResourceController<T extends Resource, ID> implements Resour
 			return new ResponseEntity<T>(HttpStatus.BAD_REQUEST);
 		}
 
-		boolean isUpdating = resourceService.getResource(id).isPresent() ? false : true;
+		boolean isUpdating = resourceService.getResource(id).isPresent();
 
 		Optional<T> r = resourceService.saveResource(givenResource);
 		if (r.isPresent()) {
