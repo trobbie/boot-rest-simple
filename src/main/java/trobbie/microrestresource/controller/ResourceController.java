@@ -37,19 +37,21 @@ public interface ResourceController<T extends Resource, ID> {
 	public ResponseEntity<T> getResource(@PathVariable("id") String id);
 
 	/**
-	 * Replaces the given resource, given the resource in the request body.  If resource id is not found,
-	 * return 400 Bad Request.  If resource_id is not a valid id type, return 404 Not Found.
+	 * Updates the given resource if already exists, or create new resource if not exists, given
+	 * the resource in the request body.  Return 200 (OK) if updated, or 201 (Created) if inserted.
+	 * If path's resource id does not match id of resource itself, return 404 Not Found.
 	 *
 	 * This returns the resource that was just updated, containing values given from the repository.
 	 * Debatably, we could return 204 (No Content), but this interface allows certain fields to be
-	 * calculated server-side (e.g. an exact dateCreated, dateModified, etc.).
+	 * calculated server-side (e.g. an exact dateCreated, dateModified, etc.) and allows client thus
+	 * to be informed of those calculations.
 	 *
 	 * @param id      the id of the entity to update
-	 * @param entity  the entity values with which to update. Entity's ID must match id of path variable.
-	 * @return the HTTP representation of the resource. If specified id was not found, return response code
-	 * 		of BadRequest.  If specified id does not match givenResource's id, return response code of
+	 * @param entity  the entity values with which to update/insert. Entity's ID must match id of path variable.
+	 * @return the HTTP representation of the resource after having saved it. If specified id was not found, return response code
+	 * 		of 201 (Created).  If specified id does not match givenResource's id, return response code of
 	 * 		BadRequest.
 	 */
-	public ResponseEntity<T> replaceResource(@PathVariable("id") String id, @RequestBody T givenResource);
+	public ResponseEntity<T> upsertResource(@PathVariable("id") String id, @RequestBody T givenResource);
 
 }

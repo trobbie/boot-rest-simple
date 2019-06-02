@@ -35,16 +35,17 @@ public interface ResourceService<T extends Resource, ID> {
 	public Optional<T> getResource(String id);
 
 	/**
-	 * Replaces the resource object at the specified resource's id.  If resource's id does not already
-	 * exist, then return an empty {@code Optional}.
+	 * Saves the resource object at the specified resource's id, regardless of whether id exists already
+	 * or not.
 	 *
 	 * <p> Note: this method must be idempotent.
 	 * <p> Note: if only certain fields are to be updated (e.g. HTTP method: PATCH), use another method.
 	 *
 	 * @param specifiedResource the resource containing the new values
-	 * @return an {@code Optional} of the replaced resource object; if resource id was not found, return
-	 * an empty {@code Optional}
+	 * @return an {@code Optional} of the replaced resource object; if resource id could not be saved, return
+	 * an empty {@code Optional}.
 	 */
-	public Optional<T> replaceResource(T specifiedResource);
+	public Optional<T> saveResource(T specifiedResource);
+
 
 }

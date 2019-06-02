@@ -34,7 +34,7 @@ public abstract class DefaultResourceService<T extends Resource, ID> implements 
 	}
 
 	@Override
-	public Optional<T> replaceResource(T specifiedResource) {
+	public Optional<T> saveResource(T specifiedResource) {
 		if (specifiedResource == null) return Optional.empty();
 		return Optional.of(resourceRepository.save(specifiedResource));
 	}

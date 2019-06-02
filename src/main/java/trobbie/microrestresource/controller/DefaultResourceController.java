@@ -46,7 +46,7 @@ public class DefaultResourceController<T extends Resource, ID> implements Resour
 
 	@Override
 	@RequestMapping(value=RELATIVE_PATH+"/{id}", method=RequestMethod.PUT)
-	public ResponseEntity<T> replaceResource(@PathVariable("id") String id, @RequestBody T givenResource) {
+	public ResponseEntity<T> upsertResource(@PathVariable("id") String id, @RequestBody T givenResource) {
 
 		// The givenResource param must be converted from JSON.  Thanks to Spring’s HTTP
 		// message converter support, you don’t need to do this conversion manually. Because Jackson 2
@@ -58,14 +58,19 @@ public class DefaultResourceController<T extends Resource, ID> implements Resour
 			return new ResponseEntity<T>(HttpStatus.BAD_REQUEST);
 		}
 
-		Optional<T> r = resourceService.replaceResource(givenResource);
+		boolean isUpdating = resourceService.getResource(id).isPresent() ? false : true;
+
+		Optional<T> r = resourceService.saveResource(givenResource);
 		if (r.isPresent()) {
-			return new ResponseEntity<T>(r.get(), HttpStatus.OK);
+			return new ResponseEntity<T>(r.get(), isUpdating ? HttpStatus.OK : HttpStatus.CREATED);
 		} else {
-			// since client used invalid id for a replace request, the request itself is considered bad,
-			// i.e. not simply a 404 Not Found.
+			// something about client request could not allow it to be saved
 			return new ResponseEntity<T>(HttpStatus.BAD_REQUEST);
 		}
+
+
+
+
 
 	}
 

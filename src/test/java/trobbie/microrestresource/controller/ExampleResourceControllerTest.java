@@ -155,7 +155,7 @@ public class ExampleResourceControllerTest {
 	public void replaceResource_Requested_ReturnSameResource() throws Exception {
 
 		mockResource2.setName("MockResource2update");
-		Mockito.when(resourceService.replaceResource(ArgumentMatchers.any(ExampleResource.class)))
+		Mockito.when(resourceService.saveResource(ArgumentMatchers.any(ExampleResource.class)))
 		.thenReturn(Optional.of(mockResource2));
 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -176,7 +176,7 @@ public class ExampleResourceControllerTest {
 	@Test
 	public void replaceResource_RequestIdNotFound_Return400BadRequest() throws Exception {
 
-		Mockito.when(resourceService.replaceResource(ArgumentMatchers.any(ExampleResource.class)))
+		Mockito.when(resourceService.saveResource(ArgumentMatchers.any(ExampleResource.class)))
 		.thenReturn(Optional.empty());
 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -195,7 +195,7 @@ public class ExampleResourceControllerTest {
 	public void replaceResource_IdMismatch_Return400BadRequest() throws Exception {
 
 		// should not call service layer at all
-		Mockito.when(resourceService.replaceResource(mockResource2))
+		Mockito.when(resourceService.saveResource(mockResource2))
 		.thenReturn(Optional.empty());
 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders
