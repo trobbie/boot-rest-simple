@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
@@ -52,12 +53,25 @@ public class ExampleResourceControllerTest {
 	private ExampleResource mockResource2;
 
 	public ExampleResourceControllerTest() {
-		this.mockResourceSetEmpty = new ArrayList<ExampleResource>();
+		createTestDataStructures();
+	}
 
+	private void createTestDataStructures() {
+		this.mockResourceSetEmpty = new ArrayList<ExampleResource>();
+		this.mockResourceSetA = new ArrayList<ExampleResource>();
+	}
+
+	@Before
+	public void resetData() {
+
+		// ensure empty
+		this.mockResourceSetEmpty.clear();
+
+		// recreate, in case ever changed in tests
 		this.mockResource1 = new ExampleResource(1L, "MockResource1");
 		this.mockResource2 = new ExampleResource(2L, "MockResource2");
 
-		this.mockResourceSetA = new ArrayList<ExampleResource>();
+		this.mockResourceSetA.clear();
 		this.mockResourceSetA.add(this.mockResource1);
 		this.mockResourceSetA.add(this.mockResource2);
 	}
