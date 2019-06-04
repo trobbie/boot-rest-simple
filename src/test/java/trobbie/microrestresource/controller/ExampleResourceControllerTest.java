@@ -61,6 +61,16 @@ public class ExampleResourceControllerTest {
 		this.mockResourceSetA = new ArrayList<ExampleResource>();
 	}
 
+	private static String asJsonString(final Object obj) {
+		try {
+			return new ObjectMapper().writeValueAsString(obj);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+
+
+	}
+
 	@Before
 	public void resetData() {
 
@@ -270,13 +280,4 @@ public class ExampleResourceControllerTest {
 		Assert.assertEquals(HttpStatus.CREATED.value(), result.getResponse().getStatus());
 	}
 
-	private static String asJsonString(final Object obj) {
-		try {
-			return new ObjectMapper().writeValueAsString(obj);
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-
-
-	}
 }
