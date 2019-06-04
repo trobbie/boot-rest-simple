@@ -39,7 +39,7 @@ public interface ResourceController<T extends Resource, ID> {
 	/**
 	 * Updates the given resource if already exists, or create new resource if not exists, given
 	 * the resource in the request body.  Return 200 (OK) if updated, or 201 (Created) if inserted.
-	 * If path's resource id does not match id of resource itself, return 404 Not Found.
+	 * If path's resource id does not match id of resource itself, return 400 (Bad Request).
 	 *
 	 * This returns the resource that was just updated, containing values given from the repository.
 	 * Debatably, we could return 204 (No Content), but this interface allows certain fields to be
@@ -48,9 +48,9 @@ public interface ResourceController<T extends Resource, ID> {
 	 *
 	 * @param id      the id of the entity to update
 	 * @param entity  the entity values with which to update/insert. Entity's ID must match id of path variable.
-	 * @return the HTTP representation of the resource after having saved it. If specified id was not found, return response code
-	 * 		of 201 (Created).  If specified id does not match givenResource's id, return response code of
-	 * 		BadRequest.
+	 * @return the HTTP representation of the resource after having saved it. If specified id was not found,
+	 * 		return response code of 201 (Created).  If specified id does not match givenResource's id, return
+	 * 		response code of 400 (Bad Request).
 	 */
 	public ResponseEntity<T> upsertResource(@PathVariable("id") String id, @RequestBody T givenResource);
 
