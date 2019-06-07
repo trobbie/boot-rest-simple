@@ -40,7 +40,8 @@ import trobbie.microrestresource.service.DefaultResourceService;
  */
 @RunWith(SpringRunner.class)
 @WebMvcTest(value = ResourceController.class)
-public class ExampleResourceControllerTest {
+public class DefaultResourceControllerTest {
+	public static final Class<ExampleResource> RESOURCE_CLASS = ExampleResource.class;
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -55,7 +56,7 @@ public class ExampleResourceControllerTest {
 	private ExampleResource mockResource3;
 	private ExampleResource mockResource3noid;
 
-	public ExampleResourceControllerTest() {
+	public DefaultResourceControllerTest() {
 		createTestDataStructures();
 	}
 
@@ -74,7 +75,7 @@ public class ExampleResourceControllerTest {
 
 	private static Resource asResource(final String jsonSource) {
 		try {
-			return new ObjectMapper().readValue(jsonSource , ExampleResource.class);
+			return new ObjectMapper().readValue(jsonSource, RESOURCE_CLASS);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -193,7 +194,7 @@ public class ExampleResourceControllerTest {
 		mockResource2.setName("MockResource2update");
 		Mockito.when(resourceService.getResource(mockResource2.getId().toString()))
 		.thenReturn(Optional.of(mockResource2));
-		Mockito.when(resourceService.saveResource(ArgumentMatchers.any(ExampleResource.class)))
+		Mockito.when(resourceService.saveResource(ArgumentMatchers.any(RESOURCE_CLASS)))
 		.thenReturn(Optional.of(mockResource2));
 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -278,7 +279,7 @@ public class ExampleResourceControllerTest {
 
 		Mockito.when(resourceService.getResource(mockResource2.getId().toString()))
 		.thenReturn(Optional.empty());
-		Mockito.when(resourceService.saveResource(ArgumentMatchers.any(ExampleResource.class)))
+		Mockito.when(resourceService.saveResource(ArgumentMatchers.any(RESOURCE_CLASS)))
 		.thenReturn(Optional.of(mockResource2));
 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -296,7 +297,7 @@ public class ExampleResourceControllerTest {
 	@Test
 	public void insertResource_RequestNewResource_Return201Created() throws Exception {
 
-		Mockito.when(resourceService.createResource(ArgumentMatchers.any(ExampleResource.class)))
+		Mockito.when(resourceService.createResource(ArgumentMatchers.any(RESOURCE_CLASS)))
 		.thenReturn(Optional.of(mockResource3));
 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders
