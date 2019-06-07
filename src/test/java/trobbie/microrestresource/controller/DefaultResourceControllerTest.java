@@ -33,6 +33,9 @@ import trobbie.microrestresource.service.DefaultResourceService;
 
 
 /**
+ * Test DefaultResourceController implementation of the ResourceController interface.
+ * An example resource model is needed to run the tests.
+ *
  * Test method syntax: MethodName_StateUnderTest_ExpectedBehavior
  *
  * @author Trevor Robbie
