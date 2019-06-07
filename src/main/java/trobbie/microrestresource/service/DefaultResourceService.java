@@ -39,4 +39,14 @@ public abstract class DefaultResourceService<T extends Resource, ID> implements 
 		return Optional.of(resourceRepository.save(specifiedResource));
 	}
 
+	@Override
+	public Optional<T> createResource(T specifiedResource) {
+		if (specifiedResource == null) return Optional.empty();
+		if (specifiedResource.getId() != null) throw new IllegalArgumentException();
+		// this save will update the id
+		return Optional.of(resourceRepository.save(specifiedResource));
+	}
+
+
+
 }

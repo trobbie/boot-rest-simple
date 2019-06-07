@@ -3,6 +3,7 @@ package trobbie.microrestresource.controller;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -67,11 +68,29 @@ public class DefaultResourceController<T extends Resource, ID> implements Resour
 			// something about client request could not allow it to be saved
 			return new ResponseEntity<T>(HttpStatus.BAD_REQUEST);
 		}
+	}
 
+	@Override
+	@RequestMapping(value=RELATIVE_PATH, method=RequestMethod.POST)
+	public ResponseEntity<T> insertResource(@RequestBody T givenResource) {
+		ResponseEntity<T> response;
 
+		if (givenResource.getId() != null) {
+			return new ResponseEntity<T>(HttpStatus.BAD_REQUEST);
+		}
 
+		Optional<T> r = resourceService.createResource(givenResource);
+		if (r.isPresent()) {
+			HttpHeaders headers = new HttpHeaders();
+			headers.add("Location", RELATIVE_PATH+"/"+r.get().getId().toString());
 
+			response = new ResponseEntity<T>(r.get(), headers, HttpStatus.CREATED);
 
+		} else {
+			// something about client request could not allow it to be saved
+			response = new ResponseEntity<T>(HttpStatus.BAD_REQUEST);
+		}
+		return response;
 	}
 
 }

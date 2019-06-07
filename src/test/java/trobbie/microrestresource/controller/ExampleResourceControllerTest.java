@@ -28,6 +28,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import trobbie.microrestresource.model.ExampleResource;
+import trobbie.microrestresource.model.Resource;
 import trobbie.microrestresource.service.DefaultResourceService;
 
 
@@ -51,6 +52,8 @@ public class ExampleResourceControllerTest {
 	private List<ExampleResource> mockResourceSetA;
 	private ExampleResource mockResource1;
 	private ExampleResource mockResource2;
+	private ExampleResource mockResource3;
+	private ExampleResource mockResource3noid;
 
 	public ExampleResourceControllerTest() {
 		createTestDataStructures();
@@ -67,8 +70,14 @@ public class ExampleResourceControllerTest {
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+	}
 
-
+	private static Resource asResource(final String jsonSource) {
+		try {
+			return new ObjectMapper().readValue(jsonSource , ExampleResource.class);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	@Before
@@ -81,9 +90,13 @@ public class ExampleResourceControllerTest {
 		this.mockResource1 = new ExampleResource(1L, "MockResource1");
 		this.mockResource2 = new ExampleResource(2L, "MockResource2");
 
+
 		this.mockResourceSetA.clear();
 		this.mockResourceSetA.add(this.mockResource1);
 		this.mockResourceSetA.add(this.mockResource2);
+
+		this.mockResource3 = new ExampleResource(3L, "MockResource3");
+		this.mockResource3noid = new ExampleResource(null, "MockResource3");
 	}
 
 
@@ -278,6 +291,45 @@ public class ExampleResourceControllerTest {
 		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 
 		Assert.assertEquals(HttpStatus.CREATED.value(), result.getResponse().getStatus());
+	}
+
+	@Test
+	public void insertResource_RequestNewResource_Return201Created() throws Exception {
+
+		Mockito.when(resourceService.createResource(ArgumentMatchers.any(ExampleResource.class)))
+		.thenReturn(Optional.of(mockResource3));
+
+		RequestBuilder requestBuilder = MockMvcRequestBuilders
+				.post(DefaultResourceController.RELATIVE_PATH)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.content(asJsonString(mockResource3noid));
+
+		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+		Assert.assertEquals(HttpStatus.CREATED.value(), result.getResponse().getStatus());
+		Resource r = asResource(result.getResponse().getContentAsString());
+
+		Assert.assertNotNull("Id expected to be created as non-null", r.getId());
+	}
+
+	@Test
+	public void insertResource_RequestResourceIdAssigned_Return400BadRequest() throws Exception {
+
+		Mockito.when(resourceService.createResource(ArgumentMatchers.any()))
+		.thenThrow(new RuntimeException());
+
+		RequestBuilder requestBuilder = MockMvcRequestBuilders
+				.post(DefaultResourceController.RELATIVE_PATH)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.content(asJsonString(mockResource3));
+
+		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+		Assert.assertEquals("Expected 400 response when resource id already specified", HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus());
 	}
 
 }

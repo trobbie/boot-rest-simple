@@ -54,4 +54,16 @@ public interface ResourceController<T extends Resource, ID> {
 	 */
 	public ResponseEntity<T> upsertResource(@PathVariable("id") String id, @RequestBody T givenResource);
 
+
+	/**
+	 * Inserts the resource given in the request body.  Upon success, return 201 (Created) with the resource's new URI
+	 * included in the Location header, and the resource (and any updated fields) in the response body.  Updated
+	 * fields would include id, and could also include fields such as dateCreated and dateModified.
+	 *
+	 * @param entity  the entity values of the resource with which to insert.
+	 * @return the HTTP representation of the resource after having saved it. On success, a 201 (Created) response code
+	 * 		is used.
+	 */
+	public ResponseEntity<T> insertResource(@RequestBody T givenResource);
+
 }
