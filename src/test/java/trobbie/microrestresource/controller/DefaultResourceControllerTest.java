@@ -336,4 +336,22 @@ public class DefaultResourceControllerTest {
 		Assert.assertEquals("Expected 400 response when resource id already specified", HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus());
 	}
 
+	@Test
+	public void insertResource_RequestUsingUnsupportedMediaType_Return415() throws Exception {
+
+		Mockito.when(resourceService.createResource(ArgumentMatchers.any()))
+		.thenThrow(new RuntimeException());
+
+		RequestBuilder requestBuilder = MockMvcRequestBuilders
+				.post(DefaultResourceController.RELATIVE_PATH)
+				.contentType(MediaType.APPLICATION_XML)
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.content("<unsupported></unsupported>");
+
+		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+		Assert.assertEquals("Expected 415 response when sending XML in request body", HttpStatus.UNSUPPORTED_MEDIA_TYPE.value(), result.getResponse().getStatus());
+	}
+
 }
