@@ -29,8 +29,10 @@ public abstract class DefaultResourceService<T extends Resource, ID> implements 
 	}
 
 	@Override
-	public Optional<T> getResource(String id) {
-		return resourceRepository.findById(this.stringToIDConverter(id));
+	public Optional<T> getResource(String idString) {
+		ID id = this.stringToIDConverter(idString);
+		if (id == null) return Optional.empty();
+		return resourceRepository.findById(id);
 	}
 
 	@Override
@@ -47,6 +49,13 @@ public abstract class DefaultResourceService<T extends Resource, ID> implements 
 		return Optional.of(resourceRepository.save(specifiedResource));
 	}
 
+	@Override
+	public Boolean deleteResource(String idString) {
+		ID id = this.stringToIDConverter(idString);
+		if (id == null) return false;
+		resourceRepository.deleteById(id);
+		return true;
+	}
 
 
 }

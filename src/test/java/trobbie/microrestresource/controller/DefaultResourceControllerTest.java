@@ -56,8 +56,8 @@ public class DefaultResourceControllerTest {
 	private List<ExampleResource> mockResourceSetA;
 	private ExampleResource mockResource1;
 	private ExampleResource mockResource2;
-	private ExampleResource mockResource3;
-	private ExampleResource mockResource3noid;
+	private ExampleResource mockResource3NotExist;
+	private ExampleResource mockResource3NotExist_NoId;
 
 	public DefaultResourceControllerTest() {
 		createTestDataStructures();
@@ -99,8 +99,8 @@ public class DefaultResourceControllerTest {
 		this.mockResourceSetA.add(this.mockResource1);
 		this.mockResourceSetA.add(this.mockResource2);
 
-		this.mockResource3 = new ExampleResource(3L, "MockResource3");
-		this.mockResource3noid = new ExampleResource(null, "MockResource3");
+		this.mockResource3NotExist = new ExampleResource(3L, "MockResource3");
+		this.mockResource3NotExist_NoId = new ExampleResource(null, "MockResource3");
 	}
 
 
@@ -318,14 +318,14 @@ public class DefaultResourceControllerTest {
 	public void insertResource_RequestNewResource_Return201Created() throws Exception {
 
 		Mockito.when(resourceService.createResource(ArgumentMatchers.any(RESOURCE_CLASS)))
-		.thenReturn(Optional.of(mockResource3));
+		.thenReturn(Optional.of(mockResource3NotExist));
 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders
 				.post(DefaultResourceController.RELATIVE_PATH)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8")
-				.content(asJsonString(mockResource3noid));
+				.content(asJsonString(mockResource3NotExist_NoId));
 
 		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 
@@ -346,7 +346,7 @@ public class DefaultResourceControllerTest {
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8")
-				.content(asJsonString(mockResource3));
+				.content(asJsonString(mockResource3NotExist));
 
 		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 
@@ -369,6 +369,44 @@ public class DefaultResourceControllerTest {
 		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 
 		Assert.assertEquals("Expected 415 response when sending XML in request body", HttpStatus.UNSUPPORTED_MEDIA_TYPE.value(), result.getResponse().getStatus());
+	}
+
+	@Test
+	public void deleteResource_ExistingResource_Return204() throws Exception {
+
+		Mockito.when(resourceService.getResource(mockResource1.getId().toString()))
+		.thenReturn(Optional.of(mockResource1));
+		Mockito.when(resourceService.deleteResource(mockResource1.getId().toString()))
+		.thenReturn(Boolean.TRUE);
+
+		RequestBuilder requestBuilder = MockMvcRequestBuilders
+				.delete(DefaultResourceController.RELATIVE_PATH + "/" + mockResource1.getId())
+				.contentType(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8");
+
+		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+		Assert.assertEquals("Expected 204 No Content when deleting existing resource",
+				HttpStatus.NO_CONTENT.value(), result.getResponse().getStatus());
+	}
+
+	@Test
+	public void deleteResource_NonExistingResource_Return404() throws Exception {
+
+		Mockito.when(resourceService.getResource(mockResource3NotExist.getId().toString()))
+		.thenReturn(Optional.empty());
+		Mockito.when(resourceService.deleteResource(ArgumentMatchers.any()))
+		.thenThrow(new RuntimeException());
+
+		RequestBuilder requestBuilder = MockMvcRequestBuilders
+				.delete(DefaultResourceController.RELATIVE_PATH + "/" + mockResource3NotExist.getId())
+				.contentType(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8");
+
+		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+		Assert.assertEquals("Expected 404 Not Found when deleting non-existing resource",
+				HttpStatus.NOT_FOUND.value(), result.getResponse().getStatus());
 	}
 
 }

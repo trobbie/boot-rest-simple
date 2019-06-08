@@ -30,7 +30,7 @@ public interface ResourceController<T extends Resource, ID> {
 	/**
 	 * Returns the retrieved resource.  Representation is as a single resource, not in array form.
 	 *
-	 * @param id the id of the specified resource
+	 * @param id	the id of the specified resource
 	 * @return the HTTP representation of the retrieved resource, identified by the specified id, or an HTTP
 	 * 		response of status code 404 if not found.
 	 */
@@ -65,5 +65,17 @@ public interface ResourceController<T extends Resource, ID> {
 	 * 		is used.
 	 */
 	public ResponseEntity<T> insertResource(@RequestBody T givenResource);
+
+	/**
+	 * Deletes the resource identified by the id given in the path.  Returns 204 (No Content) if the
+	 * repository received the delete request of an existing resource.  Returns 404 (Not Found) if the
+	 * resource id could not be found.
+	 *
+	 * @param id	the id of the specified resource to delete
+	 * @return an Http Response with no message-body.  If specified id was not found, return response code
+	 * 			404 (Not Found); if the id exists, return 204 (No Content) to indicate the delete request
+	 * 			had been received by repository.
+	 */
+	public ResponseEntity<T> deleteResource(@PathVariable("id") String id);
 
 }

@@ -28,11 +28,11 @@ public interface ResourceService<T extends Resource, ID> {
 	/**
 	 * Returns an {@code Optional} describing a resource object, given the id of the resource.
 	 *
-	 * @param id the id of the resource
-	 * @return 	an {@code Optional} with value of the retrieved resource object; if not found, returns
-	 * 			an empty {@code Optional}
+	 * @param idString the id of the resource as string
+	 * @return 	an {@code Optional} with value of the retrieved resource object; if not found, or id
+	 * 			conversion returns null, returns an empty {@code Optional}
 	 */
-	public Optional<T> getResource(String id);
+	public Optional<T> getResource(String idString);
 
 	/**
 	 * Saves the resource object at the specified resource's id, regardless of whether id exists already
@@ -56,5 +56,13 @@ public interface ResourceService<T extends Resource, ID> {
 	 * 			returns an empty {@code Optional}
 	 */
 	public Optional<T> createResource(T specifiedResource);
+
+	/**
+	 * Deletes the resource given the id of the resource.  Returns true if successfully deleted.
+	 *
+	 * @param idString the id of the resource as string
+	 * @return 	true if resource was successfully deleted.  Return false if id conversion returns null.
+	 */
+	public Boolean deleteResource(String idString);
 
 }
