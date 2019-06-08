@@ -190,6 +190,25 @@ public class DefaultResourceControllerTest {
 	}
 
 	@Test
+	public void getResource_HeadRequest_ActiveAndNoBody() throws Exception {
+
+		Mockito.when(resourceService.getResource(Mockito.any()))
+		.thenReturn(Optional.of(mockResource1));
+
+		RequestBuilder requestBuilder = MockMvcRequestBuilders
+				.head(DefaultResourceController.RELATIVE_PATH + "/" + mockResource1.getId())
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8");
+		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+		// Spring 4.3+ has implicit support for HEAD. There is no need to test their implementation.
+		// Here we are testing if it is active for our API.
+
+		Assert.assertEquals(HttpStatus.OK.value(), result.getResponse().getStatus());
+		Assert.assertEquals("Should not return message-body in response", 0, result.getResponse().getContentAsString().length());
+	}
+
+	@Test
 	public void upsertResource_Requested_ReturnSameResource() throws Exception {
 
 		mockResource2.setName("MockResource2update");
