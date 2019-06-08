@@ -15,8 +15,10 @@ public interface ResourceService<T extends Resource, ID> {
 	/**
 	 * Converter function from String (resource id from URI path) to ID's type.
 	 *
+	 * Important: if cannot convert, must return null and not an runtime exception
+	 *
 	 * @param idString the resource id string from URI path
-	 * @return 	the id with type ID
+	 * @return 	the id with type ID.  If conversion not possible, must return null.
 	 */
 	public ID stringToIDConverter(String idString);
 
@@ -29,8 +31,8 @@ public interface ResourceService<T extends Resource, ID> {
 	 * Returns an {@code Optional} describing a resource object, given the id of the resource.
 	 *
 	 * @param idString the id of the resource as string
-	 * @return 	an {@code Optional} with value of the retrieved resource object; if not found, or id
-	 * 			conversion returns null, returns an empty {@code Optional}
+	 * @return 	an {@code Optional} with value of the retrieved resource object; if not found,
+	 * 			returns an empty {@code Optional}.  If id conversion fails, return null.
 	 */
 	public Optional<T> getResource(String idString);
 
@@ -61,7 +63,7 @@ public interface ResourceService<T extends Resource, ID> {
 	 * Deletes the resource given the id of the resource.  Returns true if successfully deleted.
 	 *
 	 * @param idString the id of the resource as string
-	 * @return 	true if resource was successfully deleted.  Return false if id conversion returns null.
+	 * @return 	true if resource was successfully deleted.  If id conversion fails, return null.
 	 */
 	public Boolean deleteResource(String idString);
 

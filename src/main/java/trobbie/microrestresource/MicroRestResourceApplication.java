@@ -19,7 +19,12 @@ public class MicroRestResourceApplication {
 		return new DefaultResourceService<ExampleResource, Long>() {
 			@Override
 			public Long stringToIDConverter(String idString) {
-				return Long.parseLong(idString);
+				try {
+					return Long.parseLong(idString);
+				} catch (NumberFormatException e) {
+					return null;
+				}
+
 			}
 		};
 	}

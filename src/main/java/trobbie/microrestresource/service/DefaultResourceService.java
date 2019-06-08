@@ -31,7 +31,7 @@ public abstract class DefaultResourceService<T extends Resource, ID> implements 
 	@Override
 	public Optional<T> getResource(String idString) {
 		ID id = this.stringToIDConverter(idString);
-		if (id == null) return Optional.empty();
+		if (id == null) return null;
 		return resourceRepository.findById(id);
 	}
 
@@ -52,7 +52,7 @@ public abstract class DefaultResourceService<T extends Resource, ID> implements 
 	@Override
 	public Boolean deleteResource(String idString) {
 		ID id = this.stringToIDConverter(idString);
-		if (id == null) return false;
+		if (id == null) return null;
 		resourceRepository.deleteById(id);
 		return true;
 	}

@@ -178,7 +178,7 @@ public class DefaultResourceControllerTest {
 	public void getResource_StringIdRequested_Return400BadRequest() throws Exception {
 
 		Mockito.when(resourceService.getResource(Mockito.any()))
-		.thenThrow(RuntimeException.class);
+		.thenReturn(null);
 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders
 				.get(DefaultResourceController.RELATIVE_PATH + "/stringtest")

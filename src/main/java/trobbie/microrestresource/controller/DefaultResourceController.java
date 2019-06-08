@@ -33,15 +33,15 @@ public class DefaultResourceController<T extends Resource, ID> implements Resour
 	@RequestMapping(value=RELATIVE_PATH+"/{id}", method=RequestMethod.GET)
 	public ResponseEntity<T> getResource(@PathVariable("id") String id) {
 
-		try {
-			Optional<T> r = resourceService.getResource(id);
-			if (r.isPresent())
-				return new ResponseEntity<T>(r.get(), HttpStatus.OK);
-			else
-				return new ResponseEntity<T>(HttpStatus.NOT_FOUND);
-		} catch(Exception e) {
-			return new ResponseEntity<T>(HttpStatus.BAD_REQUEST);
-		}
+		Optional<T> r = resourceService.getResource(id);
+
+		// null response indicate something is wrong with the request
+		if (r == null) return new ResponseEntity<T>(HttpStatus.BAD_REQUEST);
+
+		if (r.isPresent())
+			return new ResponseEntity<T>(r.get(), HttpStatus.OK);
+		else
+			return new ResponseEntity<T>(HttpStatus.NOT_FOUND);
 	}
 
 	@Override
@@ -96,15 +96,16 @@ public class DefaultResourceController<T extends Resource, ID> implements Resour
 	@RequestMapping(value=RELATIVE_PATH+"/{id}", method=RequestMethod.DELETE)
 	public ResponseEntity<T> deleteResource(@PathVariable("id") String id) {
 
-		try {
-			Optional<T> r = resourceService.getResource(id);
-			if (r.isPresent())
-				return new ResponseEntity<T>(r.get(), HttpStatus.NO_CONTENT);
-			else
-				return new ResponseEntity<T>(HttpStatus.NOT_FOUND);
-		} catch(Exception e) {
-			return new ResponseEntity<T>(HttpStatus.BAD_REQUEST);
-		}
+		Optional<T> r = resourceService.getResource(id);
+
+		// null response indicate something is wrong with the request
+		if (r == null) return new ResponseEntity<T>(HttpStatus.BAD_REQUEST);
+
+		if (r.isPresent())
+			return new ResponseEntity<T>(r.get(), HttpStatus.NO_CONTENT);
+		else
+			return new ResponseEntity<T>(HttpStatus.NOT_FOUND);
+
 	}
 
 
