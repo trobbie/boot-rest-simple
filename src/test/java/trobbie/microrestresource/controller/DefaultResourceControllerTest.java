@@ -156,7 +156,6 @@ public class DefaultResourceControllerTest {
 		String expected = asJsonString(mockResource1);
 		Assert.assertEquals(HttpStatus.OK.value(), result.getResponse().getStatus());
 		JSONAssert.assertEquals(expected, result.getResponse().getContentAsString(), false);
-
 	}
 
 	@Test
@@ -173,7 +172,6 @@ public class DefaultResourceControllerTest {
 
 		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 		Assert.assertEquals(HttpStatus.NOT_FOUND.value(), result.getResponse().getStatus());
-
 	}
 
 	@Test
