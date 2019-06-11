@@ -3,8 +3,8 @@
  */
 package trobbie.microrestresource.controller;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import org.junit.Assert;
@@ -52,20 +52,113 @@ public class DefaultResourceControllerTest {
 	@MockBean
 	private DefaultResourceService<ExampleResource, Long> resourceService;
 
-	private List<ExampleResource> mockResourceSetEmpty;
-	private List<ExampleResource> mockResourceSetA;
-	private ExampleResource mockResource1;
-	private ExampleResource mockResource2;
-	private ExampleResource mockResource3NotExist;
-	private ExampleResource mockResource3NotExist_NoId;
+	private TestDatabase<ExampleResource, Long> testDatabase;
 
-	public DefaultResourceControllerTest() {
-		createTestDataStructures();
+	// abstract out the fake test data part from the tests themselves
+	private static abstract class TestDatabase<T extends Resource<ID>, ID> {
+		// Reference by own index key, not resource ID
+		// This way we can refer to test resources by index.
+		protected Map<Integer, T> mockResourceMap;
+		protected Map<Integer, T> mockResourceMapEmpty;
+
+		protected Integer indexCounter;
+		private static final Integer INITIAL_RESOURCE_SET_SIZE = 2;
+
+		public TestDatabase() {
+			this.mockResourceMapEmpty = new HashMap<Integer, T>();
+			this.mockResourceMap = new HashMap<Integer, T>();
+			this.indexCounter = 0;
+		}
+
+		/**
+		 * Convert index values to ID values. The ID value is not important as long as this method is
+		 * a deterministic, one-way function, and does not return value from getIdNeverExist()
+		 *
+		 * @param index used only as reference for tests
+		 * @return ID that the index would represent.
+		 */
+		public abstract <ID> ID indexToResourceId(Integer index);
+
+		/**
+		 * Define an id that will never be assigned a resource
+		 *
+		 * @return an ID that would never be assigned by the database
+		 */
+		public abstract Long getIdNeverExist();
+
+		/**
+		 * Change something; what is changed does not matter
+		 *
+		 * @param index used only as reference for tests
+		 * @return the resource as the index having been changed in some way.
+		 */
+		public abstract T changeResource(Integer index);
+
+		/**
+		 * Create new resource, but don't save to the "database" yet.  Required fields should
+		 * be assigned a value, but the id should be null.
+		 *
+		 * @return a resource that is newly created, yet not saved yet, thus id must be null
+		 */
+		public abstract T newUnsavedResource();
+
+
+		public void resetData() {
+			// ensure empty
+			this.mockResourceMapEmpty.clear();
+
+			this.mockResourceMap.clear();
+			this.indexCounter = 0;
+
+			for (int i=0; i < INITIAL_RESOURCE_SET_SIZE; i++) {
+				saveResource(newUnsavedResource());
+			}
+		}
+
+		public T getResource(Integer index) {
+			return this.mockResourceMap.get(index);
+		}
+
+		public Iterable<T> getResources() {
+			return this.mockResourceMap.values();
+		}
+
+		public Iterable<T> getEmptyResources() {
+			return this.mockResourceMapEmpty.values();
+		}
+
+		// return index of newly saved resource
+		public Integer saveResource(T res) {
+			Integer thisTestId = this.indexCounter+1;
+			res.setId(indexToResourceId(thisTestId));
+			this.mockResourceMap.putIfAbsent(thisTestId, res);
+			this.indexCounter = thisTestId;
+			return thisTestId;
+		}
+
 	}
 
-	private void createTestDataStructures() {
-		this.mockResourceSetEmpty = new ArrayList<ExampleResource>();
-		this.mockResourceSetA = new ArrayList<ExampleResource>();
+	public DefaultResourceControllerTest() {
+		this.testDatabase = new TestDatabase<ExampleResource, Long>() {
+			@Override
+			public Long indexToResourceId(Integer index) {
+				return Long.valueOf(index);
+			}
+			@Override
+			public Long getIdNeverExist() {
+				return 0L; // this id (of valid type) will never be assigned
+			}
+			@Override
+			public ExampleResource newUnsavedResource() {
+				return new ExampleResource(null, "MockResource"+(this.indexCounter+1));
+			}
+			@Override
+			public ExampleResource changeResource(Integer index) {
+				ExampleResource res = this.mockResourceMap.get(index);
+				res.setName(res.getName()+"Updated");  // an example change
+				return res;
+			}
+		};
 	}
 
 	private static String asJsonString(final Object obj) {
@@ -86,29 +179,14 @@ public class DefaultResourceControllerTest {
 
 	@Before
 	public void resetData() {
-
-		// ensure empty
-		this.mockResourceSetEmpty.clear();
-
-		// recreate, in case ever changed in tests
-		this.mockResource1 = new ExampleResource(1L, "MockResource1");
-		this.mockResource2 = new ExampleResource(2L, "MockResource2");
-
-
-		this.mockResourceSetA.clear();
-		this.mockResourceSetA.add(this.mockResource1);
-		this.mockResourceSetA.add(this.mockResource2);
-
-		this.mockResource3NotExist = new ExampleResource(3L, "MockResource3");
-		this.mockResource3NotExist_NoId = new ExampleResource(null, "MockResource3");
+		this.testDatabase.resetData();
 	}
-
 
 	@Test
 	public void getResources_RequestedOnEmptyData_ReturnEmptyList() throws Exception {
 
 		Mockito.when(resourceService.getResources())
-		.thenReturn(mockResourceSetEmpty);
+		.thenReturn(this.testDatabase.getEmptyResources());
 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders
 				.get(DefaultResourceController.RELATIVE_PATH)
@@ -126,7 +204,7 @@ public class DefaultResourceControllerTest {
 	public void getResources_Requested_ReturnResourceList() throws Exception {
 
 		Mockito.when(resourceService.getResources())
-		.thenReturn(mockResourceSetA);
+		.thenReturn(this.testDatabase.getResources());
 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders
 				.get(DefaultResourceController.RELATIVE_PATH)
@@ -144,16 +222,16 @@ public class DefaultResourceControllerTest {
 	public void getResource_IdFound_ReturnResource() throws Exception {
 
 		Mockito.when(resourceService.getResource(Mockito.any()))
-		.thenReturn(Optional.of(mockResource1));
+		.thenReturn(Optional.of(this.testDatabase.getResource(1)));
 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders
-				.get(DefaultResourceController.RELATIVE_PATH + "/" + mockResource1.getId())
+				.get(DefaultResourceController.RELATIVE_PATH + "/" + this.testDatabase.getResource(1).getId())
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8");
 
 		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 
-		String expected = asJsonString(mockResource1);
+		String expected = asJsonString(this.testDatabase.getResource(1));
 		Assert.assertEquals(HttpStatus.OK.value(), result.getResponse().getStatus());
 		JSONAssert.assertEquals(expected, result.getResponse().getContentAsString(), false);
 	}
@@ -193,10 +271,10 @@ public class DefaultResourceControllerTest {
 	public void getResource_HeadRequest_ActiveAndNoBody() throws Exception {
 
 		Mockito.when(resourceService.getResource(Mockito.any()))
-		.thenReturn(Optional.of(mockResource1));
+		.thenReturn(Optional.of(this.testDatabase.getResource(1)));
 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders
-				.head(DefaultResourceController.RELATIVE_PATH + "/" + mockResource1.getId())
+				.head(DefaultResourceController.RELATIVE_PATH + "/" + this.testDatabase.getResource(1).getId())
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8");
 		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
@@ -211,14 +289,15 @@ public class DefaultResourceControllerTest {
 	@Test
 	public void upsertResource_Requested_ReturnSameResource() throws Exception {
 
-		mockResource2.setName("MockResource2update");
-		Mockito.when(resourceService.getResource(mockResource2.getId().toString()))
-		.thenReturn(Optional.of(mockResource2));
+		Resource mockResource2 = this.testDatabase.changeResource(2);
+
+		Mockito.when(resourceService.getResource(this.testDatabase.getResource(2).getId().toString()))
+		.thenReturn(Optional.of(this.testDatabase.getResource(2)));
 		Mockito.when(resourceService.saveResource(ArgumentMatchers.any(RESOURCE_CLASS)))
-		.thenReturn(Optional.of(mockResource2));
+		.thenReturn(Optional.of(this.testDatabase.getResource(2)));
 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders
-				.put(DefaultResourceController.RELATIVE_PATH + "/" + mockResource2.getId())
+				.put(DefaultResourceController.RELATIVE_PATH + "/" + this.testDatabase.getResource(2).getId())
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8")
@@ -241,11 +320,11 @@ public class DefaultResourceControllerTest {
 		.thenThrow(new RuntimeException());
 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders
-				.put(DefaultResourceController.RELATIVE_PATH + "/" + mockResource1.getId())
+				.put(DefaultResourceController.RELATIVE_PATH + "/" + this.testDatabase.getResource(1).getId())
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8")
-				.content(asJsonString(mockResource2));
+				.content(asJsonString(this.testDatabase.getResource(2)));
 
 		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 
@@ -262,7 +341,7 @@ public class DefaultResourceControllerTest {
 		.thenThrow(new RuntimeException());
 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders
-				.put(DefaultResourceController.RELATIVE_PATH + "/" + mockResource2.getId())
+				.put(DefaultResourceController.RELATIVE_PATH + "/" + this.testDatabase.getResource(2).getId())
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8")
@@ -283,7 +362,7 @@ public class DefaultResourceControllerTest {
 		.thenThrow(new RuntimeException());
 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders
-				.put(DefaultResourceController.RELATIVE_PATH + "/" + mockResource2.getId())
+				.put(DefaultResourceController.RELATIVE_PATH + "/" + this.testDatabase.getResource(2).getId())
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8")
@@ -297,17 +376,17 @@ public class DefaultResourceControllerTest {
 	@Test
 	public void upsertResource_RequestNewResource_Return201Created() throws Exception {
 
-		Mockito.when(resourceService.getResource(mockResource2.getId().toString()))
+		Mockito.when(resourceService.getResource(this.testDatabase.getResource(2).getId().toString()))
 		.thenReturn(Optional.empty());
 		Mockito.when(resourceService.saveResource(ArgumentMatchers.any(RESOURCE_CLASS)))
-		.thenReturn(Optional.of(mockResource2));
+		.thenReturn(Optional.of(this.testDatabase.getResource(2)));
 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders
-				.put(DefaultResourceController.RELATIVE_PATH + "/" + mockResource2.getId())
+				.put(DefaultResourceController.RELATIVE_PATH + "/" + this.testDatabase.getResource(2).getId())
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8")
-				.content(asJsonString(mockResource2));
+				.content(asJsonString(this.testDatabase.getResource(2)));
 
 		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 
@@ -317,22 +396,31 @@ public class DefaultResourceControllerTest {
 	@Test
 	public void insertResource_RequestNewResource_Return201Created() throws Exception {
 
+		Integer new_index = this.testDatabase.saveResource(this.testDatabase.newUnsavedResource());
+
 		Mockito.when(resourceService.createResource(ArgumentMatchers.any(RESOURCE_CLASS)))
-		.thenReturn(Optional.of(mockResource3NotExist));
+		.thenReturn(Optional.of(this.testDatabase.getResource(new_index)));
+
+		// temporarily assign id=null to get the JSON body for the request
+		Resource new_resource = this.testDatabase.getResource(new_index);
+		Object new_id = new_resource.getId();
+		new_resource.setId(null);
+		String jsonResourceWithNullId = asJsonString(new_resource);
+		new_resource.setId(new_id); // reassigned
 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders
 				.post(DefaultResourceController.RELATIVE_PATH)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8")
-				.content(asJsonString(mockResource3NotExist_NoId));
+				.content(jsonResourceWithNullId);
 
 		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 
 		Assert.assertEquals(HttpStatus.CREATED.value(), result.getResponse().getStatus());
-		Resource r = asResource(result.getResponse().getContentAsString());
+		Resource resource_result = asResource(result.getResponse().getContentAsString());
 
-		Assert.assertNotNull("Id expected to be created as non-null", r.getId());
+		Assert.assertEquals("Id expected to be assigned", resource_result.getId(), new_resource.getId());
 	}
 
 	@Test
@@ -346,7 +434,7 @@ public class DefaultResourceControllerTest {
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8")
-				.content(asJsonString(mockResource3NotExist));
+				.content(asJsonString(this.testDatabase.getResource(1)));
 
 		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 
@@ -374,13 +462,13 @@ public class DefaultResourceControllerTest {
 	@Test
 	public void deleteResource_ExistingResource_Return204() throws Exception {
 
-		Mockito.when(resourceService.getResource(mockResource1.getId().toString()))
-		.thenReturn(Optional.of(mockResource1));
-		Mockito.when(resourceService.deleteResource(mockResource1.getId().toString()))
+		Mockito.when(resourceService.getResource(this.testDatabase.getResource(1).getId().toString()))
+		.thenReturn(Optional.of(this.testDatabase.getResource(1)));
+		Mockito.when(resourceService.deleteResource(this.testDatabase.getResource(1).getId().toString()))
 		.thenReturn(Boolean.TRUE);
 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders
-				.delete(DefaultResourceController.RELATIVE_PATH + "/" + mockResource1.getId())
+				.delete(DefaultResourceController.RELATIVE_PATH + "/" + this.testDatabase.getResource(1).getId())
 				.contentType(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8");
 
@@ -393,13 +481,16 @@ public class DefaultResourceControllerTest {
 	@Test
 	public void deleteResource_NonExistingResource_Return404() throws Exception {
 
-		Mockito.when(resourceService.getResource(mockResource3NotExist.getId().toString()))
+		Resource res = this.testDatabase.newUnsavedResource();
+		res.setId(this.testDatabase.getIdNeverExist());
+
+		Mockito.when(resourceService.getResource(res.getId().toString()))
 		.thenReturn(Optional.empty());
 		Mockito.when(resourceService.deleteResource(ArgumentMatchers.any()))
 		.thenThrow(new RuntimeException());
 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders
-				.delete(DefaultResourceController.RELATIVE_PATH + "/" + mockResource3NotExist.getId())
+				.delete(DefaultResourceController.RELATIVE_PATH + "/" + res.getId())
 				.contentType(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8");
 
