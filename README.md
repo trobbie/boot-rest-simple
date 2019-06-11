@@ -1,10 +1,12 @@
 # micro-rest-resource
 
+(Deprecated: using another repository for this, using spring-boot-starter-data-rest)
+
 This starter project is an example of how to provide a RESTful microservice for a generic resource using the following specific technologies:
 - Language: Java
 - Package Manager: Gradle
 - Version Control: Git
-- IoC: Spring Boot
+- IoC: Spring Boot (NOTE: **not** using spring-boot-starter-data-rest)
 - Testing: JUnit and Mockito
 - *DevTools: CircleCI [**FUTURE TASK**]*
 - *Authenticity and security: HTTPS and OAuth2 [**FUTURE TASK**]*
