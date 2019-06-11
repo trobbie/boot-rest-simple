@@ -80,6 +80,10 @@ public class DefaultResourceController<T extends Resource, ID> implements Resour
 
 		Optional<T> r = resourceService.createResource(givenResource);
 		if (r.isPresent()) {
+			// ensure the service assigned an id
+			if (r.get().getId() == null)
+				return new ResponseEntity<T>(HttpStatus.INTERNAL_SERVER_ERROR);
+
 			HttpHeaders headers = new HttpHeaders();
 			headers.add("Location", RELATIVE_PATH+"/"+r.get().getId().toString());
 
