@@ -8,9 +8,10 @@
 package trobbie.microrestjson.service;
 
 import trobbie.microrestjson.model.ExampleResource;
-import trobbie.microrestjson.service.DefaultResourceService;
 
 /**
+ * Used only for testing purposes to test an example implementation of DefaultResourceService
+ *
  * @author Trevor Robbie
  *
  */
