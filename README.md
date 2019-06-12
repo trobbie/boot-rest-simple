@@ -24,6 +24,8 @@ Every REST implementation has its nuances.  I have tried to stick to best practi
 | GET | /resources| Get all resources [**FUTURE TASK: add filtering, pagination, etc.**]) | Empty body | ***200 OK***: Array of resources |
 | GET | /resources/:id | Get resource identified by id (Standard)| Empty body | ***200 OK***: Resource |
 | PUT | /resources/:id | Replace resource identified by id | Resource | ***200 OK*** (on update) or ***201 CREATED*** (on insert): Same resource but some fields are allowed to have been changed server-side, e.g. dateModified |
+| POST | /resources | Add a new resource | Resource (id assumed null for request) | ***201 CREATED*** (on success) |
+| DELETE | /resources/:id | Delete resource identified by id (Standard)| Empty body | ***204 NO CONTENT*** (on sending delete request without error) or ***404 NOT FOUND*** (when id not found) |
 
 ## Getting Started
 
@@ -40,7 +42,7 @@ You need the following installed locally:
 
 1) Fork or clone this repository.
 ```
-git clone git@github.com:trobbie/micro-rest-resource.git
+git clone git@github.com:trobbie/micro-rest-json.git
 ```
 2) Run gradle build script in repository's directory.  This assembles and tests the project.
 ```
