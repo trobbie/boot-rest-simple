@@ -5,14 +5,14 @@
 /**
  *
  */
-package trobbie.microrestresource.dao;
+package trobbie.microrestjson.dao;
 
 import org.springframework.stereotype.Repository;
 
-import trobbie.microrestresource.model.ExampleResource;
+import trobbie.microrestjson.model.ExampleResource;
 
 /**
- * Interface used as SpringBoot's repository.  For SpringBoot to autowire, 
+ * Interface used as SpringBoot's repository.  For SpringBoot to autowire,
  * this interface needs to be defined extending the CRUDRepository with the
  * specific model used (Resource subclass) and @Repository assigned.
  *

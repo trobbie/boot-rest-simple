@@ -1,15 +1,13 @@
-# micro-rest-resource
+# micro-rest-json
 
-(Deprecated: using another repository for this, using spring-boot-starter-data-rest)
+This can be used as a starter project for a RESTful micro-service API for a generic resource.  But note that the responses are of simple JSON types.  This Spring Boot project does **not** use spring-boot-starter-data-rest, which gives a more complete implementation using HAL-formatted responses.  
 
-This starter project is an example of how to provide a RESTful microservice for a generic resource using the following specific technologies:
+In particular, the following specific technologies are in use:
 - Language: Java
 - Package Manager: Gradle
 - Version Control: Git
-- IoC: Spring Boot (NOTE: **not** using spring-boot-starter-data-rest)
+- IoC/Starters: Spring Boot (NOTE: **not** using spring-boot-starter-data-rest)
 - Testing: JUnit and Mockito
-- *DevTools: CircleCI [**FUTURE TASK**]*
-- *Authenticity and security: HTTPS and OAuth2 [**FUTURE TASK**]*
 - IDE: Eclipse (but could use any IDE)
 
 # REST API Implementation

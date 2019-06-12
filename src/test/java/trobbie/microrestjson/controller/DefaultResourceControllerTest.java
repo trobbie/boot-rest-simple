@@ -1,7 +1,7 @@
 /**
  *
  */
-package trobbie.microrestresource.controller;
+package trobbie.microrestjson.controller;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,9 +27,11 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import trobbie.microrestresource.model.ExampleResource;
-import trobbie.microrestresource.model.Resource;
-import trobbie.microrestresource.service.DefaultResourceService;
+import trobbie.microrestjson.controller.DefaultResourceController;
+import trobbie.microrestjson.controller.ResourceController;
+import trobbie.microrestjson.model.ExampleResource;
+import trobbie.microrestjson.model.Resource;
+import trobbie.microrestjson.service.DefaultResourceService;
 
 
 /**

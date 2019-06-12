@@ -1,4 +1,4 @@
-package trobbie.microrestresource.model;
+package trobbie.microrestjson.model;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

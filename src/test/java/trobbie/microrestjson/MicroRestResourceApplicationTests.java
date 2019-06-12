@@ -1,4 +1,4 @@
-package trobbie.microrestresource;
+package trobbie.microrestjson;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -9,10 +9,9 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import trobbie.microrestresource.controller.DefaultResourceController;
-import trobbie.microrestresource.dao.ResourceRepository;
-import trobbie.microrestresource.model.ExampleResource;
-import trobbie.microrestresource.service.DefaultResourceService;
+import trobbie.microrestjson.dao.ResourceRepository;
+import trobbie.microrestjson.model.ExampleResource;
+import trobbie.microrestjson.service.DefaultResourceService;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest()

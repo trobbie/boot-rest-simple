@@ -5,12 +5,12 @@
 /**
  *
  */
-package trobbie.microrestresource.dao;
+package trobbie.microrestjson.dao;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 
-import trobbie.microrestresource.model.Resource;
+import trobbie.microrestjson.model.Resource;
 
 /**
  * Interface for resource's repository.  Specify SpringBoot's @repository annotation

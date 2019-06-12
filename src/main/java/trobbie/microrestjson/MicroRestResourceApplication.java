@@ -1,11 +1,11 @@
-package trobbie.microrestresource;
+package trobbie.microrestjson;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
-import trobbie.microrestresource.model.ExampleResource;
-import trobbie.microrestresource.service.DefaultResourceService;
+import trobbie.microrestjson.model.ExampleResource;
+import trobbie.microrestjson.service.DefaultResourceService;
 
 @SpringBootApplication
 public class MicroRestResourceApplication {

@@ -1,6 +1,8 @@
-package trobbie.microrestresource.model;
+package trobbie.microrestjson.model;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+import trobbie.microrestjson.model.ExampleResource;
 
 /**
  * Interface for the resource model.  Implement the ID and any additional fields.

@@ -1,8 +1,8 @@
-package trobbie.microrestresource.service;
+package trobbie.microrestjson.service;
 
 import java.util.Optional;
 
-import trobbie.microrestresource.model.Resource;
+import trobbie.microrestjson.model.Resource;
 
 /**
  * Interface for providing service to ultimately interact resource data.
