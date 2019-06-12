@@ -76,7 +76,7 @@ public class DefaultResourceControllerTest {
 	}
 
 	@Test
-	public void getResources_RequestedOnEmptyData_ReturnEmptyList() throws Exception {
+	public void getResources_RequestedOnEmptyData_Return200AndEmptyList() throws Exception {
 
 		Mockito.when(resourceService.getResources())
 		.thenReturn(this.testDatabase.getEmptyResources());
@@ -94,7 +94,7 @@ public class DefaultResourceControllerTest {
 	}
 
 	@Test
-	public void getResources_Requested_ReturnResourceList() throws Exception {
+	public void getResources_RequestedOnNonEmptyData_Return200WithList() throws Exception {
 
 		Mockito.when(resourceService.getResources())
 		.thenReturn(this.testDatabase.getResources());
