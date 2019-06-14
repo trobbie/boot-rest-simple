@@ -1,7 +1,7 @@
 /**
  *
  */
-package trobbie.microrestjson.controller;
+package trobbie.bootrestsimple.controller;
 
 import java.util.Optional;
 
@@ -25,11 +25,13 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import trobbie.microrestjson.dao.ExampleResourceTestDatabase;
-import trobbie.microrestjson.dao.TestDatabase;
-import trobbie.microrestjson.model.ExampleResource;
-import trobbie.microrestjson.model.Resource;
-import trobbie.microrestjson.service.DefaultResourceService;
+import trobbie.bootrestsimple.controller.DefaultResourceController;
+import trobbie.bootrestsimple.controller.ResourceController;
+import trobbie.bootrestsimple.dao.ExampleResourceTestDatabase;
+import trobbie.bootrestsimple.dao.TestDatabase;
+import trobbie.bootrestsimple.model.ExampleResource;
+import trobbie.bootrestsimple.model.Resource;
+import trobbie.bootrestsimple.service.DefaultResourceService;
 
 
 /**

@@ -1,12 +1,12 @@
-package trobbie.microrestjson.service;
+package trobbie.bootrestsimple.service;
 
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import trobbie.microrestjson.dao.ResourceRepository;
-import trobbie.microrestjson.model.Resource;
+import trobbie.bootrestsimple.dao.ResourceRepository;
+import trobbie.bootrestsimple.model.Resource;
 
 /**
  * Default resource service that can be used out of the box for base functionality.

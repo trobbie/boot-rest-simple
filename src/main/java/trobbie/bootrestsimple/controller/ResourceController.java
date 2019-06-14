@@ -1,10 +1,10 @@
-package trobbie.microrestjson.controller;
+package trobbie.bootrestsimple.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import trobbie.microrestjson.model.Resource;
+import trobbie.bootrestsimple.model.Resource;
 
 /**
  * Interface for REST controller intended to forward web requests to ResourceService layer.

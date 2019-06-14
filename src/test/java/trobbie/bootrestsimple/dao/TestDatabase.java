@@ -5,12 +5,12 @@
 /**
  *
  */
-package trobbie.microrestjson.dao;
+package trobbie.bootrestsimple.dao;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import trobbie.microrestjson.model.Resource;
+import trobbie.bootrestsimple.model.Resource;
 
 /**
  * @author Trevor Robbie

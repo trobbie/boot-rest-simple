@@ -5,9 +5,10 @@
 /**
  *
  */
-package trobbie.microrestjson.service;
+package trobbie.bootrestsimple.service;
 
-import trobbie.microrestjson.model.ExampleResource;
+import trobbie.bootrestsimple.model.ExampleResource;
+import trobbie.bootrestsimple.service.DefaultResourceService;
 
 /**
  * Used only for testing purposes to test an example implementation of DefaultResourceService

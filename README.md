@@ -1,6 +1,6 @@
-# micro-rest-json
+# boot-rest-simple
 
-This can be used as a starter project for a RESTful micro-service API for a generic resource.  But note that the responses are of simple JSON types.  This Spring Boot project does **not** use spring-boot-starter-data-rest, which gives a more complete implementation using HAL-formatted responses.  
+This Spring Boot project can be used as a starter project for a RESTful API for a generic resource that does **not** use hypermedia (i.e. HATEOAS/HAL).  The responses are simple JSON formats of the resource.  This Spring Boot project does **not** use spring-boot-starter-data-rest, which gives a more complete implementation using HAL-formatted responses.  
 
 In particular, the following specific technologies are in use:
 - Language: Java

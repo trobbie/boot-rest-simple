@@ -5,11 +5,11 @@
 /**
  *
  */
-package trobbie.microrestjson.dao;
+package trobbie.bootrestsimple.dao;
 
 import org.springframework.stereotype.Repository;
 
-import trobbie.microrestjson.model.ExampleResource;
+import trobbie.bootrestsimple.model.ExampleResource;
 
 /**
  * Interface used as SpringBoot's repository.  For SpringBoot to autowire,

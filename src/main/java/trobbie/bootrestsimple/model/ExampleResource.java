@@ -1,4 +1,4 @@
-package trobbie.microrestjson.model;
+package trobbie.bootrestsimple.model;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

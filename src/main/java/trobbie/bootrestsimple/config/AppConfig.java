@@ -1,4 +1,4 @@
-package trobbie.microrestjson.config;
+package trobbie.bootrestsimple.config;
 
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
  *
  */
 @Configuration // denotes class as having @Bean definitions used to configure
-@ComponentScan("trobbie.microrestjson")
+@ComponentScan("trobbie.bootrestsimple")
 public class AppConfig {
 
 }

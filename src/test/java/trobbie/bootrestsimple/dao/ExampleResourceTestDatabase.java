@@ -5,9 +5,9 @@
 /**
  *
  */
-package trobbie.microrestjson.dao;
+package trobbie.bootrestsimple.dao;
 
-import trobbie.microrestjson.model.ExampleResource;
+import trobbie.bootrestsimple.model.ExampleResource;
 
 /**
  * @author Trevor Robbie

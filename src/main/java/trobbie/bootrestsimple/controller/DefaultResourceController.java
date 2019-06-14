@@ -1,4 +1,4 @@
-package trobbie.microrestjson.controller;
+package trobbie.bootrestsimple.controller;
 
 import java.util.Optional;
 
@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import trobbie.microrestjson.model.Resource;
-import trobbie.microrestjson.service.ResourceService;
+import trobbie.bootrestsimple.model.Resource;
+import trobbie.bootrestsimple.service.ResourceService;
 
 @RestController
 public class DefaultResourceController<T extends Resource, ID> implements ResourceController<T, ID> {

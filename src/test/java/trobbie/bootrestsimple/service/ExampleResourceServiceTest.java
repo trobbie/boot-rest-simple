@@ -5,9 +5,12 @@
 /**
  *
  */
-package trobbie.microrestjson.service;
+package trobbie.bootrestsimple.service;
+
+import java.util.Optional;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -16,10 +19,11 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import trobbie.microrestjson.dao.ExampleResourceTestDatabase;
-import trobbie.microrestjson.dao.ResourceRepository;
-import trobbie.microrestjson.dao.TestDatabase;
-import trobbie.microrestjson.model.ExampleResource;
+import trobbie.bootrestsimple.dao.ExampleResourceTestDatabase;
+import trobbie.bootrestsimple.dao.ResourceRepository;
+import trobbie.bootrestsimple.dao.TestDatabase;
+import trobbie.bootrestsimple.model.ExampleResource;
+import trobbie.bootrestsimple.service.DefaultResourceService;
 
 /**
  * Test ExampleResourceService implementation of the DefaultResourceService interface, that
@@ -42,6 +46,11 @@ public class ExampleResourceServiceTest {
 
 	private TestDatabase<ExampleResource, Long> testDatabase = new ExampleResourceTestDatabase();;
 
+	@Before
+	public void setup() {
+		testDatabase.resetData();
+	}
+
 	@Test
 	public void getResources_NoEntriesInRepo_ReturnEmptyList() {
 		Mockito.when(resourceRepository.findAll())
@@ -54,12 +63,30 @@ public class ExampleResourceServiceTest {
 
 	@Test
 	public void getResources_SomeEntriesInRepo_ReturnNonEmptyList() {
+		Iterable<ExampleResource> testResources = testDatabase.getResources();
 		Mockito.when(resourceRepository.findAll())
-		.thenReturn(testDatabase.getResources());
+		.thenReturn(testResources);
 
 		Iterable<ExampleResource> result = resourceService.getResources();
+		long resultSize = result.spliterator().getExactSizeIfKnown();
 
-		Assert.assertEquals(result.spliterator().getExactSizeIfKnown(), 1L);
+		Assert.assertNotNull(result);
+		Assert.assertNotEquals(resultSize, 0L);
+		Assert.assertEquals(resultSize, testResources.spliterator().getExactSizeIfKnown());
+	}
+
+	@Test
+	public void getResource_IdFound_ReturnResource() {
+		Integer indexTest = 2;
+		Long idTest = testDatabase.getResource(indexTest).getId();
+
+		Mockito.when(resourceRepository.findById(idTest))
+		.thenReturn(Optional.of(testDatabase.getResource(indexTest)));
+
+		Optional<ExampleResource> result = resourceService.getResource(idTest.toString());
+
+		Assert.assertNotNull(result.get());
+		Assert.assertEquals(result.get().getId(), idTest);
 	}
 
 
