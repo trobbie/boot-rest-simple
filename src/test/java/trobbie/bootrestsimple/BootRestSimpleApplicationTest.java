@@ -15,7 +15,7 @@ import trobbie.bootrestsimple.service.DefaultResourceService;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest()
-public class MicroRestResourceApplicationTests {
+public class BootRestSimpleApplicationTest {
 
 	@Bean
 	public DefaultResourceService<ExampleResource, Long> resourceService() {
