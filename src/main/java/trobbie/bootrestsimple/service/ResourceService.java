@@ -12,6 +12,36 @@ import trobbie.bootrestsimple.model.Resource;
  */
 public interface ResourceService<T extends Resource, ID> {
 
+	public static class ReplaceResourceResult<T> {
+		private T replacedResource;
+		private Boolean savedAsNewResource = Boolean.FALSE;
+		/**
+		 * @return the replacedResource
+		 */
+		public T getReplacedResource() {
+			return replacedResource;
+		}
+		/**
+		 * @param replacedResource the replacedResource to set
+		 */
+		public void setReplacedResource(T replacedResource) {
+			this.replacedResource = replacedResource;
+		}
+		/**
+		 * @return the savedAsNewResource
+		 */
+		public Boolean getSavedAsNewResource() {
+			return savedAsNewResource;
+		}
+		/**
+		 * @param savedAsNewResource the savedAsNewResource to set
+		 */
+		public void setSavedAsNewResource(Boolean savedAsNewResource) {
+			this.savedAsNewResource = savedAsNewResource;
+		}
+
+	}
+
 	/**
 	 * Converter function from String (resource id from URI path) to ID's type.
 	 *
@@ -37,17 +67,18 @@ public interface ResourceService<T extends Resource, ID> {
 	public Optional<T> getResource(String idString);
 
 	/**
-	 * Saves the resource object at the specified resource's id, regardless of whether id exists already
-	 * or not.
+	 * Replaces the resource object, identified by id.  If id does not already exist, it is effectively
+	 * saved as new.  Whether the id exists or not, the specified resource's id field is assigned the
+	 * value of parameter id.
 	 *
 	 * <p> Note: this method must be idempotent.
-	 * <p> Note: if only certain fields are to be updated (e.g. HTTP method: PATCH), use another method.
 	 *
-	 * @param specifiedResource the resource containing the new values
+	 * @param id the id of the resource to replace, as a String
+	 * @param specifiedResource the resource containing the new values; the id field is ignored
 	 * @return 	an {@code Optional} of the replaced resource object; if resource id could not be saved, returns
 	 * 			an empty {@code Optional}.
 	 */
-	public Optional<T> saveResource(T specifiedResource);
+	public Optional<ReplaceResourceResult<T>> replaceResource(String id, T specifiedResource);
 
 	/**
 	 * Creates the resource object, which should have {@code id = null}.  On success, return the resource

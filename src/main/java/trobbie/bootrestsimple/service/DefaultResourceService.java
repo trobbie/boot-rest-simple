@@ -36,9 +36,18 @@ public abstract class DefaultResourceService<T extends Resource, ID> implements 
 	}
 
 	@Override
-	public Optional<T> saveResource(T specifiedResource) {
+	public Optional<ReplaceResourceResult<T>> replaceResource(String idString, T specifiedResource) {
 		if (specifiedResource == null) return Optional.empty();
-		return Optional.of(resourceRepository.save(specifiedResource));
+		ID id = this.stringToIDConverter(idString);
+		specifiedResource.setId(id);
+		ReplaceResourceResult<T> result = new ReplaceResourceResult();
+		try {
+			result.setSavedAsNewResource(resourceRepository.findById(id).isPresent() ? false : true);
+			result.setReplacedResource(resourceRepository.save(specifiedResource));
+			return Optional.of(result);
+		} catch(Exception e) {
+			return Optional.empty();
+		}
 	}
 
 	@Override

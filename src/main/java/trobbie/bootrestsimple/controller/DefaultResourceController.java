@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import trobbie.bootrestsimple.model.Resource;
 import trobbie.bootrestsimple.service.ResourceService;
+import trobbie.bootrestsimple.service.ResourceService.ReplaceResourceResult;
 
 @RestController
 public class DefaultResourceController<T extends Resource, ID> implements ResourceController<T, ID> {
@@ -46,26 +47,22 @@ public class DefaultResourceController<T extends Resource, ID> implements Resour
 
 	@Override
 	@RequestMapping(value=RELATIVE_PATH+"/{id}", method=RequestMethod.PUT)
-	public ResponseEntity<T> upsertResource(@PathVariable("id") String id, @RequestBody T givenResource) {
+	public ResponseEntity<T> replaceResource(@PathVariable("id") String id, @RequestBody T givenResource) {
 
 		// The givenResource param must be converted from JSON.  Thanks to Spring’s HTTP
 		// message converter support, you don’t need to do this conversion manually. Because Jackson 2
 		// is on the classpath, Spring’s MappingJackson2HttpMessageConverter is automatically chosen to
 		// convert the Resource instance to/from JSON.
 
-		// Ensure the id from URI is same as that in request body
-		if (!id.equals(givenResource.getId().toString())) {
-			return new ResponseEntity<T>(HttpStatus.BAD_REQUEST);
-		}
+		Optional<ReplaceResourceResult<T>> r = resourceService.replaceResource(id, givenResource);
 
-		boolean isUpdating = resourceService.getResource(id).isPresent();
-
-		Optional<T> r = resourceService.saveResource(givenResource);
 		if (r.isPresent()) {
-			return new ResponseEntity<T>(r.get(), isUpdating ? HttpStatus.OK : HttpStatus.CREATED);
+			return new ResponseEntity<T>(
+					r.get().getReplacedResource(),
+					r.get().getSavedAsNewResource() ? HttpStatus.CREATED : HttpStatus.OK);
 		} else {
 			// something about client request could not allow it to be saved
-			return new ResponseEntity<T>(HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<T>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 

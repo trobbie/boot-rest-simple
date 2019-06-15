@@ -25,13 +25,12 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import trobbie.bootrestsimple.controller.DefaultResourceController;
-import trobbie.bootrestsimple.controller.ResourceController;
 import trobbie.bootrestsimple.dao.ExampleResourceTestDatabase;
 import trobbie.bootrestsimple.dao.TestDatabase;
 import trobbie.bootrestsimple.model.ExampleResource;
 import trobbie.bootrestsimple.model.Resource;
 import trobbie.bootrestsimple.service.DefaultResourceService;
+import trobbie.bootrestsimple.service.ResourceService;
 
 
 /**
@@ -182,14 +181,17 @@ public class DefaultResourceControllerTest {
 	}
 
 	@Test
-	public void upsertResource_Requested_ReturnSameResource() throws Exception {
+	public void replaceResource_ExistingResource_ReturnSameResource() throws Exception {
 
 		Resource mockResource2 = this.testDatabase.changeResource(2);
 
-		Mockito.when(resourceService.getResource(this.testDatabase.getResource(2).getId().toString()))
-		.thenReturn(Optional.of(this.testDatabase.getResource(2)));
-		Mockito.when(resourceService.saveResource(ArgumentMatchers.any(RESOURCE_CLASS)))
-		.thenReturn(Optional.of(this.testDatabase.getResource(2)));
+		ResourceService.ReplaceResourceResult<ExampleResource> mockServiceresult = new ResourceService.ReplaceResourceResult<ExampleResource>();
+		mockServiceresult.setReplacedResource(this.testDatabase.getResource(2));
+		mockServiceresult.setSavedAsNewResource(false);
+
+		Mockito.when(resourceService.replaceResource(ArgumentMatchers.anyString(), ArgumentMatchers.any(RESOURCE_CLASS)))
+		.thenReturn(Optional.of(mockServiceresult));
+
 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders
 				.put(DefaultResourceController.RELATIVE_PATH + "/" + this.testDatabase.getResource(2).getId())
@@ -206,13 +208,37 @@ public class DefaultResourceControllerTest {
 	}
 
 	@Test
-	public void upsertResource_IdMismatch_Return400BadRequest() throws Exception {
+	public void replaceResource_RequestNewResource_Return201Created() throws Exception {
+		ResourceService.ReplaceResourceResult<ExampleResource> mockServiceresult = new ResourceService.ReplaceResourceResult<ExampleResource>();
+		mockServiceresult.setReplacedResource(this.testDatabase.getResource(2));
+		mockServiceresult.setSavedAsNewResource(true);
 
-		// should not call service layer at all
-		Mockito.when(resourceService.getResource(ArgumentMatchers.any()))
-		.thenThrow(new RuntimeException());
-		Mockito.when(resourceService.saveResource(ArgumentMatchers.any()))
-		.thenThrow(new RuntimeException());
+		Mockito.when(resourceService.replaceResource(ArgumentMatchers.anyString(), ArgumentMatchers.any(RESOURCE_CLASS)))
+		.thenReturn(Optional.of(mockServiceresult));
+
+		RequestBuilder requestBuilder = MockMvcRequestBuilders
+				.put(DefaultResourceController.RELATIVE_PATH + "/" + this.testDatabase.getResource(2).getId())
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.content(asJsonString(this.testDatabase.getResource(2)));
+
+		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+		Assert.assertEquals(HttpStatus.CREATED.value(), result.getResponse().getStatus());
+	}
+
+	@Test
+	public void replaceResource_IdMismatch_ReturnSuccess() throws Exception {
+
+		Resource mockResource2 = this.testDatabase.changeResource(2);
+
+		ResourceService.ReplaceResourceResult<ExampleResource> mockServiceresult = new ResourceService.ReplaceResourceResult<ExampleResource>();
+		mockServiceresult.setReplacedResource(this.testDatabase.getResource(2));
+		mockServiceresult.setSavedAsNewResource(false);
+
+		Mockito.when(resourceService.replaceResource(ArgumentMatchers.anyString(), ArgumentMatchers.any(RESOURCE_CLASS)))
+		.thenReturn(Optional.of(mockServiceresult));
 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders
 				.put(DefaultResourceController.RELATIVE_PATH + "/" + this.testDatabase.getResource(1).getId())
@@ -223,16 +249,14 @@ public class DefaultResourceControllerTest {
 
 		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 
-		Assert.assertEquals(HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus());
+		Assert.assertEquals(HttpStatus.OK.value(), result.getResponse().getStatus());
 	}
 
 	@Test
-	public void upsertResource_RequestWithEmptyBody_Return400BadRequest() throws Exception {
+	public void replaceResource_RequestWithEmptyBody_Return400BadRequest() throws Exception {
 
 		// should not call service layer at all
-		Mockito.when(resourceService.getResource(ArgumentMatchers.any()))
-		.thenThrow(new RuntimeException());
-		Mockito.when(resourceService.saveResource(ArgumentMatchers.any()))
+		Mockito.when(resourceService.replaceResource(ArgumentMatchers.anyString(), ArgumentMatchers.any()))
 		.thenThrow(new RuntimeException());
 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -248,12 +272,10 @@ public class DefaultResourceControllerTest {
 	}
 
 	@Test
-	public void upsertResource_RequestWithInvalidBody_Return400BadRequest() throws Exception {
+	public void replaceResource_RequestWithInvalidBody_Return400BadRequest() throws Exception {
 
 		// should not call service layer at all
-		Mockito.when(resourceService.getResource(ArgumentMatchers.any()))
-		.thenThrow(new RuntimeException());
-		Mockito.when(resourceService.saveResource(ArgumentMatchers.any()))
+		Mockito.when(resourceService.replaceResource(ArgumentMatchers.anyString(), ArgumentMatchers.any()))
 		.thenThrow(new RuntimeException());
 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -266,26 +288,6 @@ public class DefaultResourceControllerTest {
 		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 
 		Assert.assertEquals(HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus());
-	}
-
-	@Test
-	public void upsertResource_RequestNewResource_Return201Created() throws Exception {
-
-		Mockito.when(resourceService.getResource(this.testDatabase.getResource(2).getId().toString()))
-		.thenReturn(Optional.empty());
-		Mockito.when(resourceService.saveResource(ArgumentMatchers.any(RESOURCE_CLASS)))
-		.thenReturn(Optional.of(this.testDatabase.getResource(2)));
-
-		RequestBuilder requestBuilder = MockMvcRequestBuilders
-				.put(DefaultResourceController.RELATIVE_PATH + "/" + this.testDatabase.getResource(2).getId())
-				.contentType(MediaType.APPLICATION_JSON)
-				.accept(MediaType.APPLICATION_JSON)
-				.characterEncoding("UTF-8")
-				.content(asJsonString(this.testDatabase.getResource(2)));
-
-		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
-
-		Assert.assertEquals(HttpStatus.CREATED.value(), result.getResponse().getStatus());
 	}
 
 	@Test

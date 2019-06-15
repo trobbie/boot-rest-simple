@@ -13,6 +13,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -23,7 +24,6 @@ import trobbie.bootrestsimple.dao.ExampleResourceTestDatabase;
 import trobbie.bootrestsimple.dao.ResourceRepository;
 import trobbie.bootrestsimple.dao.TestDatabase;
 import trobbie.bootrestsimple.model.ExampleResource;
-import trobbie.bootrestsimple.service.DefaultResourceService;
 
 /**
  * Test ExampleResourceService implementation of the DefaultResourceService interface, that
@@ -35,6 +35,7 @@ import trobbie.bootrestsimple.service.DefaultResourceService;
  *
  */
 @RunWith(SpringRunner.class)
+// @SpringBootTest()
 @ContextConfiguration(classes = {ExampleResourceService.class })
 public class ExampleResourceServiceTest {
 
@@ -89,6 +90,74 @@ public class ExampleResourceServiceTest {
 		Assert.assertEquals(result.get().getId(), idTest);
 	}
 
+	@Test
+	public void replaceResource_IdFound_ReturnResource() {
+		Integer indexTest = 2;
+		ExampleResource res = testDatabase.getResource(indexTest);
 
+		Mockito.when(resourceRepository.findById(ArgumentMatchers.any()))
+		.thenReturn(Optional.of(testDatabase.getResource(indexTest)));
+		Mockito.when(resourceRepository.save(res))
+		.thenReturn(res);
+
+		Optional<ResourceService.ReplaceResourceResult<ExampleResource>> result
+		= resourceService.replaceResource(res.getId().toString(), res );
+
+		Assert.assertEquals(true, result.isPresent());
+		Assert.assertEquals(false, result.get().getSavedAsNewResource());
+	}
+
+	@Test
+	public void replaceResource_IdNotFound_ReturnResource() {
+		Integer indexTest = 2;
+		ExampleResource res = testDatabase.getResource(indexTest);
+
+		Mockito.when(resourceRepository.findById(ArgumentMatchers.any()))
+		.thenReturn(Optional.empty());
+		Mockito.when(resourceRepository.save(res))
+		.thenReturn(res);
+
+		Optional<ResourceService.ReplaceResourceResult<ExampleResource>> result
+		= resourceService.replaceResource(res.getId().toString(), res );
+
+		Assert.assertEquals(true, result.isPresent());
+		Assert.assertEquals(true, result.get().getSavedAsNewResource());
+	}
+
+	@Test
+	public void replaceResource_ResourceIdNotAssigned_ReturnResourceWithIdAssigned() {
+		Integer indexTest = 2;
+		ExampleResource res = testDatabase.getResource(indexTest);
+		Long idTest = res.getId();
+
+		Mockito.when(resourceRepository.findById(ArgumentMatchers.any()))
+		.thenReturn(Optional.empty());
+		Mockito.when(resourceRepository.save(ArgumentMatchers.any()))
+		.thenReturn(res);
+
+		res.setId(null);
+
+		Optional<ResourceService.ReplaceResourceResult<ExampleResource>> result
+		= resourceService.replaceResource(idTest.toString(), res );
+
+		Assert.assertEquals(true, result.isPresent());
+		Assert.assertNotNull(result.get().getReplacedResource().getId());
+	}
+
+	@Test
+	public void replaceResource_ErrorDuringSave_ReturnEmptyOptional() {
+		Integer indexTest = 2;
+		ExampleResource res = testDatabase.getResource(indexTest);
+
+		Mockito.when(resourceRepository.findById(ArgumentMatchers.any()))
+		.thenReturn(Optional.empty());
+		Mockito.when(resourceRepository.save(res))
+		.thenThrow(new RuntimeException());
+
+		Optional<ResourceService.ReplaceResourceResult<ExampleResource>> result
+		= resourceService.replaceResource(res.getId().toString(), res );
+
+		Assert.assertEquals(false, result.isPresent());
+	}
 
 }
