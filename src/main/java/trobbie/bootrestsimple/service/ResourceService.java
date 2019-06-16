@@ -75,20 +75,20 @@ public interface ResourceService<T extends Resource<ID>, ID> {
 	 *
 	 * @param id the id of the resource to replace, as a String
 	 * @param specifiedResource the resource containing the new values; the id field is ignored
-	 * @return 	an {@code Optional} of the replaced resource object; if resource id could not be saved, returns
-	 * 			an empty {@code Optional}.
+	 * @return 	an {@code Optional} of the replaced resource object; if resource id could not be saved,
+	 * 			returns an empty {@code Optional}.
 	 */
 	public Optional<ReplaceResourceResult<T>> replaceResource(String id, T specifiedResource);
 
 	/**
-	 * Creates the resource object, which should have {@code id = null}.  On success, return the resource
+	 * Inserts the resource object, which should have {@code id = null}.  On success, return the resource
 	 * with the id assigned, along with any other calculated fields.
 	 *
 	 * @param specifiedResource the resource containing the new values, where {@code id = null}
-	 * @return 	an {@code Optional} of the created resource object; if resource could not be created,
+	 * @return 	an {@code Optional} of the inserted resource object; if resource could not be created,
 	 * 			returns an empty {@code Optional}
 	 */
-	public Optional<T> createResource(T specifiedResource);
+	public Optional<T> insertResource(T specifiedResource);
 
 	/**
 	 * Deletes the resource given the id of the resource.  Returns true if successfully deleted.

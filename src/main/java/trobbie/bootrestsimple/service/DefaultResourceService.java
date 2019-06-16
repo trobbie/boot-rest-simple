@@ -37,7 +37,7 @@ public abstract class DefaultResourceService<T extends Resource<ID>, ID> impleme
 
 	@Override
 	public Optional<ReplaceResourceResult<T>> replaceResource(String idString, T specifiedResource) {
-		if (specifiedResource == null) return Optional.empty();
+		if (specifiedResource == null) throw new IllegalArgumentException();
 		ID id = this.stringToIDConverter(idString);
 		specifiedResource.setId(id);
 		ReplaceResourceResult<T> result = new ReplaceResourceResult<>();
@@ -46,16 +46,26 @@ public abstract class DefaultResourceService<T extends Resource<ID>, ID> impleme
 			result.setReplacedResource(resourceRepository.save(specifiedResource));
 			return Optional.of(result);
 		} catch(Exception e) {
+			// repository saving error means server errors; if we can determine that resource
+			// parameters are wrong before saving, then we should not try saving at all and
+			// return a different result other than empty Optional
 			return Optional.empty();
 		}
 	}
 
 	@Override
-	public Optional<T> createResource(T specifiedResource) {
-		if (specifiedResource == null) return Optional.empty();
+	public Optional<T> insertResource(T specifiedResource) {
+		if (specifiedResource == null) throw new IllegalArgumentException();
 		if (specifiedResource.getId() != null) throw new IllegalArgumentException();
-		// this save will update the id
-		return Optional.of(resourceRepository.save(specifiedResource));
+		try {
+			// this save will update the id
+			return Optional.of(resourceRepository.save(specifiedResource));
+		} catch(Exception e) {
+			// repository saving error means server errors; if we can determine that resource
+			// parameters are wrong before saving, then we should not try saving at all and
+			// return a different result other than empty Optional
+			return Optional.empty();
+		}
 	}
 
 	@Override

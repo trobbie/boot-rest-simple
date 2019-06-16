@@ -278,7 +278,7 @@ public abstract class DefaultResourceControllerTest<T extends Resource<ID>, ID> 
 
 		Integer new_index = this.testDatabase.saveResource(this.testDatabase.newUnsavedResource());
 
-		Mockito.when(resourceService.createResource(ArgumentMatchers.any()))
+		Mockito.when(resourceService.insertResource(ArgumentMatchers.any()))
 		.thenReturn(Optional.of(this.testDatabase.getResource(new_index)));
 
 		// temporarily assign id=null to get the JSON body for the request
@@ -306,7 +306,7 @@ public abstract class DefaultResourceControllerTest<T extends Resource<ID>, ID> 
 	@Test
 	public void insertResource_RequestResourceIdAssigned_Return400BadRequest() throws Exception {
 
-		Mockito.when(resourceService.createResource(ArgumentMatchers.any()))
+		Mockito.when(resourceService.insertResource(ArgumentMatchers.any()))
 		.thenThrow(new RuntimeException());
 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -324,7 +324,7 @@ public abstract class DefaultResourceControllerTest<T extends Resource<ID>, ID> 
 	@Test
 	public void insertResource_RequestUsingUnsupportedMediaType_Return415() throws Exception {
 
-		Mockito.when(resourceService.createResource(ArgumentMatchers.any()))
+		Mockito.when(resourceService.insertResource(ArgumentMatchers.any()))
 		.thenThrow(new RuntimeException());
 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders

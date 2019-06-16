@@ -75,9 +75,9 @@ public class DefaultResourceController<T extends Resource<ID>, ID> implements Re
 			return new ResponseEntity<T>(HttpStatus.BAD_REQUEST);
 		}
 
-		Optional<T> r = resourceService.createResource(givenResource);
+		Optional<T> r = resourceService.insertResource(givenResource);
 		if (r.isPresent()) {
-			// ensure the service assigned an id
+			// ensure the service assigned an id (i.e. got saved)
 			if (r.get().getId() == null)
 				return new ResponseEntity<T>(HttpStatus.INTERNAL_SERVER_ERROR);
 
@@ -88,7 +88,7 @@ public class DefaultResourceController<T extends Resource<ID>, ID> implements Re
 
 		} else {
 			// something about client request could not allow it to be saved
-			response = new ResponseEntity<T>(HttpStatus.BAD_REQUEST);
+			response = new ResponseEntity<T>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		return response;
 	}

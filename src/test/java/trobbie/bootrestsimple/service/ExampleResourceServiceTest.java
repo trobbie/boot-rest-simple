@@ -164,4 +164,43 @@ public class ExampleResourceServiceTest {
 		Assert.assertEquals(false, result.isPresent());
 	}
 
+	@Test
+	public void insertResource_NewResource_ReturnResourceWithId() {
+
+		ExampleResource newResource = testDatabase.newUnsavedResource();
+
+		Mockito.when(resourceRepository.save(newResource))
+		.thenReturn(testDatabase.getResource(2)); // not testing resource other than the id field
+
+		Optional<ExampleResource> result
+		= resourceService.insertResource(newResource);
+
+		Assert.assertEquals(true, result.isPresent());
+		Assert.assertNotNull(result.get().getId());
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void insertResource_NullResource_ThrowRuntime() {
+
+		// should not be called
+		Mockito.when(resourceRepository.save(ArgumentMatchers.any()))
+		.thenThrow(new RuntimeException());
+
+		resourceService.insertResource(null);
+
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void insertResource_IdAlreadyAssigned_ThrowRuntime() {
+		Integer indexTest = 2;
+		ExampleResource res = testDatabase.getResource(indexTest);
+
+		// should not be called
+		Mockito.when(resourceRepository.save(ArgumentMatchers.any()))
+		.thenThrow(new RuntimeException());
+
+		resourceService.insertResource(res);
+
+	}
+
 }
