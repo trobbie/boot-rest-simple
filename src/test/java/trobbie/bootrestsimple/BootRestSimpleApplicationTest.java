@@ -7,14 +7,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import trobbie.bootrestsimple.config.UnitTestConfig;
 import trobbie.bootrestsimple.dao.ResourceRepository;
+import trobbie.bootrestsimple.dao.TestDatabase;
 import trobbie.bootrestsimple.model.ExampleResource;
 import trobbie.bootrestsimple.service.DefaultResourceService;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest()
+@SpringBootTest
+@ActiveProfiles("test")
+@ContextConfiguration(classes = { UnitTestConfig.class } )
 public class BootRestSimpleApplicationTest {
 
 	@Bean
@@ -36,6 +42,9 @@ public class BootRestSimpleApplicationTest {
 	@Autowired
 	private DefaultResourceService<ExampleResource, Long> resourceService;
 
+	@Autowired
+	private TestDatabase<ExampleResource, Long> testDatabase;
+
 	@Test
 	public void contextLoads() {
 		// this empty function just tests to see if startup throws an exception
@@ -48,5 +57,7 @@ public class BootRestSimpleApplicationTest {
 		Assert.assertNotNull(appContext);
 		Assert.assertNotNull(resourceRepository);
 		Assert.assertNotNull(resourceService);
+		Assert.assertNotNull(testDatabase);
 	}
+
 }

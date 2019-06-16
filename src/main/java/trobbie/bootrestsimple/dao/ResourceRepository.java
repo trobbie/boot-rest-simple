@@ -21,6 +21,6 @@ import trobbie.bootrestsimple.model.Resource;
  * @author Trevor Robbie
  */
 @NoRepositoryBean  // exclude from being picked up and thus having an instance created for this intermediate interface
-public interface ResourceRepository<T extends Resource, ID> extends CrudRepository<T, ID> {
+public interface ResourceRepository<T extends Resource<ID>, ID> extends CrudRepository<T, ID> {
 
 }

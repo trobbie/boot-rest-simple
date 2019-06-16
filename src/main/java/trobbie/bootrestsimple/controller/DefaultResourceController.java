@@ -17,7 +17,7 @@ import trobbie.bootrestsimple.service.ResourceService;
 import trobbie.bootrestsimple.service.ResourceService.ReplaceResourceResult;
 
 @RestController
-public class DefaultResourceController<T extends Resource, ID> implements ResourceController<T, ID> {
+public class DefaultResourceController<T extends Resource<ID>, ID> implements ResourceController<T, ID> {
 
 	public static final String RELATIVE_PATH = "/v1/resources";  // TODO: move out of this class?
 

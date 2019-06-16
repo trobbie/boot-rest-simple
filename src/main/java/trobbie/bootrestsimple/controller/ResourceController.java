@@ -18,7 +18,7 @@ import trobbie.bootrestsimple.model.Resource;
  *
  */
 
-public interface ResourceController<T extends Resource, ID> {
+public interface ResourceController<T extends Resource<ID>, ID> {
 
 	/**
 	 * Returns list of retrieved resources.

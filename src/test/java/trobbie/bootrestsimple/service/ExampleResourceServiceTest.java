@@ -17,10 +17,11 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import trobbie.bootrestsimple.dao.ExampleResourceTestDatabase;
+import trobbie.bootrestsimple.config.UnitTestConfig;
 import trobbie.bootrestsimple.dao.ResourceRepository;
 import trobbie.bootrestsimple.dao.TestDatabase;
 import trobbie.bootrestsimple.model.ExampleResource;
@@ -35,8 +36,10 @@ import trobbie.bootrestsimple.model.ExampleResource;
  *
  */
 @RunWith(SpringRunner.class)
+@ActiveProfiles("test")
+@ContextConfiguration(classes = { UnitTestConfig.class } )
 // @SpringBootTest()
-@ContextConfiguration(classes = {ExampleResourceService.class })
+// @ContextConfiguration(classes = {ExampleResourceService.class })
 public class ExampleResourceServiceTest {
 
 	@Autowired
@@ -45,7 +48,8 @@ public class ExampleResourceServiceTest {
 	@MockBean
 	private ResourceRepository<ExampleResource, Long> resourceRepository;
 
-	private TestDatabase<ExampleResource, Long> testDatabase = new ExampleResourceTestDatabase();;
+	@Autowired
+	private TestDatabase<ExampleResource, Long> testDatabase;
 
 	@Before
 	public void setup() {

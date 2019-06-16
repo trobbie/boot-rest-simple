@@ -18,7 +18,7 @@ import trobbie.bootrestsimple.model.Resource;
  *
  */
 @Service
-public abstract class DefaultResourceService<T extends Resource, ID> implements ResourceService<T, ID> {
+public abstract class DefaultResourceService<T extends Resource<ID>, ID> implements ResourceService<T, ID> {
 
 	@Autowired  // mark as being injected (wired by type)
 	private ResourceRepository<T, ID> resourceRepository;
@@ -40,7 +40,7 @@ public abstract class DefaultResourceService<T extends Resource, ID> implements 
 		if (specifiedResource == null) return Optional.empty();
 		ID id = this.stringToIDConverter(idString);
 		specifiedResource.setId(id);
-		ReplaceResourceResult<T> result = new ReplaceResourceResult();
+		ReplaceResourceResult<T> result = new ReplaceResourceResult<>();
 		try {
 			result.setSavedAsNewResource(resourceRepository.findById(id).isPresent() ? false : true);
 			result.setReplacedResource(resourceRepository.save(specifiedResource));

@@ -10,7 +10,7 @@ import trobbie.bootrestsimple.model.Resource;
  * @author Trevor Robbie
  *
  */
-public interface ResourceService<T extends Resource, ID> {
+public interface ResourceService<T extends Resource<ID>, ID> {
 
 	public static class ReplaceResourceResult<T> {
 		private T replacedResource;

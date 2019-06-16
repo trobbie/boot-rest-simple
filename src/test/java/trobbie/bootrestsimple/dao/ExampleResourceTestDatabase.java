@@ -7,6 +7,8 @@
  */
 package trobbie.bootrestsimple.dao;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import trobbie.bootrestsimple.model.ExampleResource;
 
 /**
@@ -32,6 +34,14 @@ public class ExampleResourceTestDatabase extends TestDatabase<ExampleResource, L
 		ExampleResource res = this.mockResourceMap.get(index);
 		res.setName(res.getName()+"Updated");  // an example change
 		return res;
+	}
+	@Override
+	public ExampleResource asResource(final String jsonSource) {
+		try {
+			return new ObjectMapper().readValue(jsonSource, ExampleResource.class);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 }

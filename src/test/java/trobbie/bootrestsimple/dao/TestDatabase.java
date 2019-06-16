@@ -13,7 +13,7 @@ import java.util.Map;
 import trobbie.bootrestsimple.model.Resource;
 
 /**
- * @author Trevor Robbie
+ @author Trevor Robbie
  *
  */
 public abstract class TestDatabase<T extends Resource<ID>, ID> {
@@ -38,14 +38,14 @@ public abstract class TestDatabase<T extends Resource<ID>, ID> {
 	 * @param index used only as reference for tests
 	 * @return ID that the index would represent.
 	 */
-	public abstract <ID> ID indexToResourceId(Integer index);
+	public abstract ID indexToResourceId(Integer index);
 
 	/**
 	 * Define an id that will never be assigned a resource
 	 *
 	 * @return an ID that would never be assigned by the database
 	 */
-	public abstract Long getIdNeverExist();
+	public abstract ID getIdNeverExist();
 
 	/**
 	 * Change something; what is changed does not matter
@@ -63,6 +63,13 @@ public abstract class TestDatabase<T extends Resource<ID>, ID> {
 	 */
 	public abstract T newUnsavedResource();
 
+	/**
+	 * Creates a resource object from the JSON string.
+	 *
+	 * @param jsonSource the string to convert into an object
+	 * @return an object of resource type
+	 */
+	public abstract T asResource(final String jsonSource);
 
 	public void resetData() {
 		// ensure empty

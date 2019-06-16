@@ -8,16 +8,13 @@ import java.util.Optional;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
@@ -25,9 +22,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import trobbie.bootrestsimple.dao.ExampleResourceTestDatabase;
 import trobbie.bootrestsimple.dao.TestDatabase;
-import trobbie.bootrestsimple.model.ExampleResource;
 import trobbie.bootrestsimple.model.Resource;
 import trobbie.bootrestsimple.service.DefaultResourceService;
 import trobbie.bootrestsimple.service.ResourceService;
@@ -42,30 +37,20 @@ import trobbie.bootrestsimple.service.ResourceService;
  * @author Trevor Robbie
  *
  */
-@RunWith(SpringRunner.class)
-@WebMvcTest(value = ResourceController.class)
-public class DefaultResourceControllerTest {
-	public static final Class<ExampleResource> RESOURCE_CLASS = ExampleResource.class;
+public abstract class DefaultResourceControllerTest<T extends Resource<ID>, ID> {
 
 	@Autowired
 	private MockMvc mockMvc;
 
 	@MockBean
-	private DefaultResourceService<ExampleResource, Long> resourceService;
+	private DefaultResourceService<T, ID> resourceService;
 
-	private TestDatabase<ExampleResource, Long> testDatabase = new ExampleResourceTestDatabase();
+	@Autowired
+	private TestDatabase<T, ID> testDatabase;
 
 	private static String asJsonString(final Object obj) {
 		try {
 			return new ObjectMapper().writeValueAsString(obj);
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	private static Resource asResource(final String jsonSource) {
-		try {
-			return new ObjectMapper().readValue(jsonSource, RESOURCE_CLASS);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -183,13 +168,13 @@ public class DefaultResourceControllerTest {
 	@Test
 	public void replaceResource_ExistingResource_ReturnSameResource() throws Exception {
 
-		Resource mockResource2 = this.testDatabase.changeResource(2);
+		Resource<ID> mockResource2 = this.testDatabase.changeResource(2);
 
-		ResourceService.ReplaceResourceResult<ExampleResource> mockServiceresult = new ResourceService.ReplaceResourceResult<ExampleResource>();
+		ResourceService.ReplaceResourceResult<T> mockServiceresult = new ResourceService.ReplaceResourceResult<T>();
 		mockServiceresult.setReplacedResource(this.testDatabase.getResource(2));
 		mockServiceresult.setSavedAsNewResource(false);
 
-		Mockito.when(resourceService.replaceResource(ArgumentMatchers.anyString(), ArgumentMatchers.any(RESOURCE_CLASS)))
+		Mockito.when(resourceService.replaceResource(ArgumentMatchers.anyString(), ArgumentMatchers.any()))
 		.thenReturn(Optional.of(mockServiceresult));
 
 
@@ -209,11 +194,11 @@ public class DefaultResourceControllerTest {
 
 	@Test
 	public void replaceResource_RequestNewResource_Return201Created() throws Exception {
-		ResourceService.ReplaceResourceResult<ExampleResource> mockServiceresult = new ResourceService.ReplaceResourceResult<ExampleResource>();
+		ResourceService.ReplaceResourceResult<T> mockServiceresult = new ResourceService.ReplaceResourceResult<T>();
 		mockServiceresult.setReplacedResource(this.testDatabase.getResource(2));
 		mockServiceresult.setSavedAsNewResource(true);
 
-		Mockito.when(resourceService.replaceResource(ArgumentMatchers.anyString(), ArgumentMatchers.any(RESOURCE_CLASS)))
+		Mockito.when(resourceService.replaceResource(ArgumentMatchers.anyString(), ArgumentMatchers.any()))
 		.thenReturn(Optional.of(mockServiceresult));
 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -231,13 +216,11 @@ public class DefaultResourceControllerTest {
 	@Test
 	public void replaceResource_IdMismatch_ReturnSuccess() throws Exception {
 
-		Resource mockResource2 = this.testDatabase.changeResource(2);
-
-		ResourceService.ReplaceResourceResult<ExampleResource> mockServiceresult = new ResourceService.ReplaceResourceResult<ExampleResource>();
+		ResourceService.ReplaceResourceResult<T> mockServiceresult = new ResourceService.ReplaceResourceResult<T>();
 		mockServiceresult.setReplacedResource(this.testDatabase.getResource(2));
 		mockServiceresult.setSavedAsNewResource(false);
 
-		Mockito.when(resourceService.replaceResource(ArgumentMatchers.anyString(), ArgumentMatchers.any(RESOURCE_CLASS)))
+		Mockito.when(resourceService.replaceResource(ArgumentMatchers.anyString(), ArgumentMatchers.any()))
 		.thenReturn(Optional.of(mockServiceresult));
 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -295,12 +278,12 @@ public class DefaultResourceControllerTest {
 
 		Integer new_index = this.testDatabase.saveResource(this.testDatabase.newUnsavedResource());
 
-		Mockito.when(resourceService.createResource(ArgumentMatchers.any(RESOURCE_CLASS)))
+		Mockito.when(resourceService.createResource(ArgumentMatchers.any()))
 		.thenReturn(Optional.of(this.testDatabase.getResource(new_index)));
 
 		// temporarily assign id=null to get the JSON body for the request
-		Resource new_resource = this.testDatabase.getResource(new_index);
-		Object new_id = new_resource.getId();
+		Resource<ID> new_resource = this.testDatabase.getResource(new_index);
+		ID new_id = new_resource.getId();
 		new_resource.setId(null);
 		String jsonResourceWithNullId = asJsonString(new_resource);
 		new_resource.setId(new_id); // reassigned
@@ -315,7 +298,7 @@ public class DefaultResourceControllerTest {
 		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 
 		Assert.assertEquals(HttpStatus.CREATED.value(), result.getResponse().getStatus());
-		Resource resource_result = asResource(result.getResponse().getContentAsString());
+		Resource<ID> resource_result = testDatabase.asResource(result.getResponse().getContentAsString());
 
 		Assert.assertEquals("Id expected to be assigned", resource_result.getId(), new_resource.getId());
 	}
@@ -378,7 +361,7 @@ public class DefaultResourceControllerTest {
 	@Test
 	public void deleteResource_NonExistingResource_Return404() throws Exception {
 
-		Resource res = this.testDatabase.newUnsavedResource();
+		Resource<ID> res = this.testDatabase.newUnsavedResource();
 		res.setId(this.testDatabase.getIdNeverExist());
 
 		Mockito.when(resourceService.getResource(res.getId().toString()))
