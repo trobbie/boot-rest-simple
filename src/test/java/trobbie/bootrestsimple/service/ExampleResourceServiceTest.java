@@ -95,6 +95,13 @@ public class ExampleResourceServiceTest {
 	}
 
 	@Test
+	public void getResource_BadIdConversion_ReturnEmptyOptional() {
+		Optional<ExampleResource> result = resourceService.getResource("unconvertable_id");
+
+		Assert.assertEquals(false, result.isPresent());
+	}
+
+	@Test
 	public void replaceResource_IdFound_ReturnResource() {
 		Integer indexTest = 2;
 		ExampleResource res = testDatabase.getResource(indexTest);
@@ -109,6 +116,13 @@ public class ExampleResourceServiceTest {
 
 		Assert.assertEquals(true, result.isPresent());
 		Assert.assertEquals(false, result.get().getSavedAsNewResource());
+	}
+
+	@Test(expected = IllegalArgumentException.class)
+	public void replaceResource_NullResource_ThrowException() {
+
+		Optional<ResourceService.ReplaceResourceResult<ExampleResource>> result
+		= resourceService.replaceResource("1", null );
 	}
 
 	@Test
@@ -165,6 +179,17 @@ public class ExampleResourceServiceTest {
 	}
 
 	@Test
+	public void replaceResource_BadIdConversion_ReturnEmptyOptional() {
+		Integer indexTest = 2;
+		ExampleResource res = testDatabase.getResource(indexTest);
+
+		Optional<ResourceService.ReplaceResourceResult<ExampleResource>> result
+		= resourceService.replaceResource("unconvertable_id", res);
+
+		Assert.assertEquals(false, result.isPresent());
+	}
+
+	@Test
 	public void insertResource_NewResource_ReturnResourceWithId() {
 
 		ExampleResource newResource = testDatabase.newUnsavedResource();
@@ -201,6 +226,37 @@ public class ExampleResourceServiceTest {
 
 		resourceService.insertResource(res);
 
+	}
+
+	@Test
+	public void insertResource_ErrorDuringSave_ReturnEmptyOptional() {
+		ExampleResource newResource = testDatabase.newUnsavedResource();
+
+		Mockito.when(resourceRepository.save(ArgumentMatchers.any()))
+		.thenThrow(new RuntimeException());
+
+		Optional<ExampleResource> result = resourceService.insertResource(newResource);
+
+		Assert.assertEquals(false, result.isPresent());
+	}
+
+	@Test
+	public void deleteResource_BadIdConversion_ReturnEmptyOptional() {
+		Boolean result = resourceService.deleteResource("unconvertable_id");
+
+		Assert.assertNull(result);
+	}
+
+	@Test
+	public void deleteResource_ExistingId_ReturnTrue() {
+		Integer indexTest = 2;
+		ExampleResource res = testDatabase.getResource(indexTest);
+
+		Mockito.doNothing().when(resourceRepository).delete(ArgumentMatchers.any());
+
+		Boolean result = resourceService.deleteResource(res.getId().toString());
+
+		Assert.assertEquals(true, result);
 	}
 
 }
