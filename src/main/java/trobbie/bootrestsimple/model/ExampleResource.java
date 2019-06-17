@@ -63,7 +63,7 @@ public class ExampleResource implements Resource<Long> {
 	@Override
 	public String toString() {
 		return String.format(
-				"SimpleResource[id=%d, name='%s']",
+				"ExampleResource[id=%d, name='%s']",
 				id, name);
 	}
 
