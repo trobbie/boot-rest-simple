@@ -31,7 +31,7 @@ public abstract class DefaultResourceService<T extends Resource<ID>, ID> impleme
 	@Override
 	public Optional<T> getResource(String idString) {
 		ID id = this.stringToIDConverter(idString);
-		if (id == null) return null;
+		if (id == null) return Optional.empty();
 		return resourceRepository.findById(id);
 	}
 
@@ -39,6 +39,7 @@ public abstract class DefaultResourceService<T extends Resource<ID>, ID> impleme
 	public Optional<ReplaceResourceResult<T>> replaceResource(String idString, T specifiedResource) {
 		if (specifiedResource == null) throw new IllegalArgumentException();
 		ID id = this.stringToIDConverter(idString);
+		if (id == null) return Optional.empty();
 		specifiedResource.setId(id);
 		ReplaceResourceResult<T> result = new ReplaceResourceResult<>();
 		try {
