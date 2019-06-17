@@ -58,11 +58,12 @@ public interface ResourceService<T extends Resource<ID>, ID> {
 	public Iterable<T> getResources();
 
 	/**
-	 * Returns an {@code Optional} describing a resource object, given the id of the resource.
+	 * Returns an {@code Optional} describing a resource object, given the id of the resource.  If the id
+	 * is not found, or the idString could not be converted, then return empty {@code Optional}.
 	 *
 	 * @param idString the id of the resource as string
 	 * @return 	an {@code Optional} with value of the retrieved resource object; if not found,
-	 * 			returns an empty {@code Optional}.  If id conversion fails, return null.
+	 * 			returns an empty {@code Optional}.  If id conversion fails, return empty {@code Optional}.
 	 */
 	public Optional<T> getResource(String idString);
 
