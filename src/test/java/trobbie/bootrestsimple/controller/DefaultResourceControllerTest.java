@@ -132,13 +132,13 @@ public abstract class DefaultResourceControllerTest<T extends Resource<ID>, ID> 
 	}
 
 	@Test
-	public void getResource_StringIdRequested_Return400BadRequest() throws Exception {
+	public void getResource_InvalidPathId_Return400BadRequest() throws Exception {
 
 		Mockito.when(resourceService.getResource(Mockito.any()))
 		.thenReturn(null);
 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders
-				.get(DefaultResourceController.RELATIVE_PATH + "/stringtest")
+				.get(DefaultResourceController.RELATIVE_PATH + "/invalid_typed_id")  // change this if String id is actually ok
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UTF-8");
 
@@ -170,9 +170,8 @@ public abstract class DefaultResourceControllerTest<T extends Resource<ID>, ID> 
 
 		Resource<ID> mockResource2 = this.testDatabase.changeResource(2);
 
-		ResourceService.ReplaceResourceResult<T> mockServiceresult = new ResourceService.ReplaceResourceResult<T>();
-		mockServiceresult.setReplacedResource(this.testDatabase.getResource(2));
-		mockServiceresult.setSavedAsNewResource(false);
+		ResourceService.ReplaceResourceResult<T> mockServiceresult = new ResourceService.ReplaceResourceResult<T>(
+				this.testDatabase.getResource(2), false, Optional.empty());
 
 		Mockito.when(resourceService.replaceResource(ArgumentMatchers.anyString(), ArgumentMatchers.any()))
 		.thenReturn(Optional.of(mockServiceresult));
@@ -194,9 +193,8 @@ public abstract class DefaultResourceControllerTest<T extends Resource<ID>, ID> 
 
 	@Test
 	public void replaceResource_RequestNewResource_Return201Created() throws Exception {
-		ResourceService.ReplaceResourceResult<T> mockServiceresult = new ResourceService.ReplaceResourceResult<T>();
-		mockServiceresult.setReplacedResource(this.testDatabase.getResource(2));
-		mockServiceresult.setSavedAsNewResource(true);
+		ResourceService.ReplaceResourceResult<T> mockServiceresult = new ResourceService.ReplaceResourceResult<T>(
+				this.testDatabase.getResource(2), true, Optional.empty());
 
 		Mockito.when(resourceService.replaceResource(ArgumentMatchers.anyString(), ArgumentMatchers.any()))
 		.thenReturn(Optional.of(mockServiceresult));
@@ -216,9 +214,8 @@ public abstract class DefaultResourceControllerTest<T extends Resource<ID>, ID> 
 	@Test
 	public void replaceResource_IdMismatch_ReturnSuccess() throws Exception {
 
-		ResourceService.ReplaceResourceResult<T> mockServiceresult = new ResourceService.ReplaceResourceResult<T>();
-		mockServiceresult.setReplacedResource(this.testDatabase.getResource(2));
-		mockServiceresult.setSavedAsNewResource(false);
+		ResourceService.ReplaceResourceResult<T> mockServiceresult = new ResourceService.ReplaceResourceResult<T>(
+				this.testDatabase.getResource(2), false, Optional.empty());
 
 		Mockito.when(resourceService.replaceResource(ArgumentMatchers.anyString(), ArgumentMatchers.any()))
 		.thenReturn(Optional.of(mockServiceresult));
@@ -233,6 +230,27 @@ public abstract class DefaultResourceControllerTest<T extends Resource<ID>, ID> 
 		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 
 		Assert.assertEquals(HttpStatus.OK.value(), result.getResponse().getStatus());
+	}
+
+	@Test
+	public void replaceResource_InvalidPathId_Return400BadRequest() throws Exception {
+
+		ResourceService.ReplaceResourceResult<T> mockServiceresult = new ResourceService.ReplaceResourceResult<T>(
+				null, false, Optional.of("Id type is invalid."));
+
+		Mockito.when(resourceService.replaceResource(Mockito.anyString(), Mockito.any()))
+		.thenReturn(Optional.of(mockServiceresult));
+
+		RequestBuilder requestBuilder = MockMvcRequestBuilders
+				.put(DefaultResourceController.RELATIVE_PATH + "/invalid_typed_id")  // change this if String id is actually ok
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.content(asJsonString(this.testDatabase.getResource(2)));
+
+		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+		Assert.assertEquals(HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus());
 	}
 
 	@Test

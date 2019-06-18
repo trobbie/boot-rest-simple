@@ -184,9 +184,10 @@ public class ExampleResourceServiceTest {
 		ExampleResource res = testDatabase.getResource(indexTest);
 
 		Optional<ResourceService.ReplaceResourceResult<ExampleResource>> result
-		= resourceService.replaceResource("unconvertable_id", res);
+		= resourceService.replaceResource("invalid_typed_id", res);
 
-		Assert.assertEquals(false, result.isPresent());
+		Assert.assertEquals(true, result.isPresent());
+		Assert.assertEquals(true, result.get().getInvalidArgsMessage().isPresent());
 	}
 
 	@Test

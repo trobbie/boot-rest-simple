@@ -12,20 +12,24 @@ import trobbie.bootrestsimple.model.Resource;
  */
 public interface ResourceService<T extends Resource<ID>, ID> {
 
-	public static class ReplaceResourceResult<T> {
-		private T replacedResource;
-		private Boolean savedAsNewResource = Boolean.FALSE;
+	public static final class ReplaceResourceResult<T> {
+		protected T replacedResource;
+		protected Boolean savedAsNewResource = Boolean.FALSE;
+		protected Optional<String> invalidArgsMessage;
+
+		public ReplaceResourceResult() {
+		}
+
+		public ReplaceResourceResult(T replacedResource, Boolean savedAsNewResource, Optional<String> invalidArgsMessage) {
+			this.replacedResource = replacedResource;
+			this.savedAsNewResource = savedAsNewResource;
+			this.invalidArgsMessage = invalidArgsMessage;
+		}
 		/**
 		 * @return the replacedResource
 		 */
 		public T getReplacedResource() {
 			return replacedResource;
-		}
-		/**
-		 * @param replacedResource the replacedResource to set
-		 */
-		public void setReplacedResource(T replacedResource) {
-			this.replacedResource = replacedResource;
 		}
 		/**
 		 * @return the savedAsNewResource
@@ -34,10 +38,11 @@ public interface ResourceService<T extends Resource<ID>, ID> {
 			return savedAsNewResource;
 		}
 		/**
-		 * @param savedAsNewResource the savedAsNewResource to set
+		 * Returns error message, if error occurred.  If no error occurred, this returns empty {@code Optional}
+		 * @return the invalidArgsMessage
 		 */
-		public void setSavedAsNewResource(Boolean savedAsNewResource) {
-			this.savedAsNewResource = savedAsNewResource;
+		public Optional<String> getInvalidArgsMessage() {
+			return invalidArgsMessage;
 		}
 
 	}
@@ -76,8 +81,12 @@ public interface ResourceService<T extends Resource<ID>, ID> {
 	 *
 	 * @param id the id of the resource to replace, as a String
 	 * @param specifiedResource the resource containing the new values; the id field is ignored
-	 * @return 	an {@code Optional} of the replaced resource object; if resource id could not be saved,
-	 * 			returns an empty {@code Optional}.
+	 * @return 	an {@code Optional} of the result of replacing the resource object.  If id is an invalid
+	 * 			type, the {@ invalidArgsMessage} field is filled with an error message.  On success, the
+	 * 			{@ invalidArgsMessage} remains empty {@code Optional}, and the {@code replacedResource}
+	 * 			field is filled with resource values after saving.  In addition, after success, the
+	 * 			{@code savedAsNewResource} is set to True if no resource was found with this id already,
+	 * 			else False, suggesting an update instead.
 	 */
 	public Optional<ReplaceResourceResult<T>> replaceResource(String id, T specifiedResource);
 

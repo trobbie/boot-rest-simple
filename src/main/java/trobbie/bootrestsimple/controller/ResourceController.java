@@ -39,7 +39,8 @@ public interface ResourceController<T extends Resource<ID>, ID> {
 	/**
 	 * Updates the given resource if already exists, or create new resource if not exists, using the
 	 * id in the URI.  Return 200 (OK) if updated, or 201 (Created) if inserted.
-	 * The id in the given resource is ignored.
+	 * The id in the given resource is ignored.  If the path id is an invalid type, returns
+	 * 400 (Bad Request).
 	 *
 	 * This returns the resource that was just updated, containing values given from the repository.
 	 * Debatably, we could return 204 (No Content), but this interface allows certain fields to be
@@ -48,8 +49,9 @@ public interface ResourceController<T extends Resource<ID>, ID> {
 	 *
 	 * @param id      the id of the entity to replace
 	 * @param givenResource  the resource values with which to replace.  The id field is ignored.
-	 * @return the HTTP representation of the resource after having saved it. If specified id was not found,
-	 * 		return response code of 201 (Created).  If had existed, return 200 (OK).
+	 * @return the HTTP representation of the resource after having saved it.  If specified id was not found,
+	 * 		return response code of 201 (Created).  If had existed, return 200 (OK). If the path id is an
+	 * 		invalid type, returns 400 (Bad Request)
 	 */
 	public ResponseEntity<T> replaceResource(@PathVariable("id") String id, @RequestBody T givenResource);
 
