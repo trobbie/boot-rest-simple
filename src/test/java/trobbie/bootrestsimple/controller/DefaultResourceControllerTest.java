@@ -171,7 +171,7 @@ public abstract class DefaultResourceControllerTest<T extends Resource<ID>, ID> 
 		Resource<ID> mockResource2 = this.testDatabase.changeResource(2);
 
 		ResourceService.ReplaceResourceResult<T> mockServiceresult = new ResourceService.ReplaceResourceResult<T>(
-				this.testDatabase.getResource(2), false, Optional.empty());
+				this.testDatabase.getResource(2), false, null);
 
 		Mockito.when(resourceService.replaceResource(ArgumentMatchers.anyString(), ArgumentMatchers.any()))
 		.thenReturn(Optional.of(mockServiceresult));
@@ -194,7 +194,7 @@ public abstract class DefaultResourceControllerTest<T extends Resource<ID>, ID> 
 	@Test
 	public void replaceResource_RequestNewResource_Return201Created() throws Exception {
 		ResourceService.ReplaceResourceResult<T> mockServiceresult = new ResourceService.ReplaceResourceResult<T>(
-				this.testDatabase.getResource(2), true, Optional.empty());
+				this.testDatabase.getResource(2), true, null);
 
 		Mockito.when(resourceService.replaceResource(ArgumentMatchers.anyString(), ArgumentMatchers.any()))
 		.thenReturn(Optional.of(mockServiceresult));
@@ -215,7 +215,7 @@ public abstract class DefaultResourceControllerTest<T extends Resource<ID>, ID> 
 	public void replaceResource_IdMismatch_ReturnSuccess() throws Exception {
 
 		ResourceService.ReplaceResourceResult<T> mockServiceresult = new ResourceService.ReplaceResourceResult<T>(
-				this.testDatabase.getResource(2), false, Optional.empty());
+				this.testDatabase.getResource(2), false, null);
 
 		Mockito.when(resourceService.replaceResource(ArgumentMatchers.anyString(), ArgumentMatchers.any()))
 		.thenReturn(Optional.of(mockServiceresult));
@@ -236,7 +236,7 @@ public abstract class DefaultResourceControllerTest<T extends Resource<ID>, ID> 
 	public void replaceResource_InvalidPathId_Return400BadRequest() throws Exception {
 
 		ResourceService.ReplaceResourceResult<T> mockServiceresult = new ResourceService.ReplaceResourceResult<T>(
-				null, false, Optional.of("Id type is invalid."));
+				null, false, "Id type is invalid.");
 
 		Mockito.when(resourceService.replaceResource(Mockito.anyString(), Mockito.any()))
 		.thenReturn(Optional.of(mockServiceresult));

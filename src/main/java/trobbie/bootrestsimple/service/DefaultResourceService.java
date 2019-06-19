@@ -39,10 +39,10 @@ public abstract class DefaultResourceService<T extends Resource<ID>, ID> impleme
 	public Optional<ReplaceResourceResult<T>> replaceResource(String idString, T specifiedResource) {
 		if (specifiedResource == null) throw new IllegalArgumentException();
 
-		ReplaceResourceResult<T> result = new ReplaceResourceResult<>();
+		ReplaceResourceResult<T> result;
 		ID id = this.stringToIDConverter(idString);
 		if (id == null) {
-			result.invalidArgsMessage = Optional.of("Id type is invalid.");
+			result = new ReplaceResourceResult<>(null, false, "Id type is invalid.");
 			return Optional.of(result);
 		}
 
@@ -50,8 +50,11 @@ public abstract class DefaultResourceService<T extends Resource<ID>, ID> impleme
 		specifiedResource.setId(id);
 
 		try {
-			result.savedAsNewResource = resourceRepository.findById(id).isPresent() ? false : true;
-			result.replacedResource = resourceRepository.save(specifiedResource);
+			boolean previouslyFound = resourceRepository.findById(id).isPresent();
+			result = new ReplaceResourceResult<>(
+					resourceRepository.save(specifiedResource),
+					!previouslyFound,
+					null);
 			return Optional.of(result);
 		} catch(Exception e) {
 			// repository saving error means server errors; if we can determine that resource

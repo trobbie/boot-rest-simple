@@ -13,14 +13,11 @@ import trobbie.bootrestsimple.model.Resource;
 public interface ResourceService<T extends Resource<ID>, ID> {
 
 	public static final class ReplaceResourceResult<T> {
-		protected T replacedResource;
-		protected Boolean savedAsNewResource = Boolean.FALSE;
-		protected Optional<String> invalidArgsMessage;
+		private final T replacedResource;
+		private final Boolean savedAsNewResource;
+		private final String invalidArgsMessage;
 
-		public ReplaceResourceResult() {
-		}
-
-		public ReplaceResourceResult(T replacedResource, Boolean savedAsNewResource, Optional<String> invalidArgsMessage) {
+		public ReplaceResourceResult(T replacedResource, Boolean savedAsNewResource, String invalidArgsMessage) {
 			this.replacedResource = replacedResource;
 			this.savedAsNewResource = savedAsNewResource;
 			this.invalidArgsMessage = invalidArgsMessage;
@@ -41,7 +38,7 @@ public interface ResourceService<T extends Resource<ID>, ID> {
 		 * Returns error message, if error occurred.  If no error occurred, this returns empty {@code Optional}
 		 * @return the invalidArgsMessage
 		 */
-		public Optional<String> getInvalidArgsMessage() {
+		public String getInvalidArgsMessage() {
 			return invalidArgsMessage;
 		}
 
@@ -82,8 +79,8 @@ public interface ResourceService<T extends Resource<ID>, ID> {
 	 * @param id the id of the resource to replace, as a String
 	 * @param specifiedResource the resource containing the new values; the id field is ignored
 	 * @return 	an {@code Optional} of the result of replacing the resource object.  If id is an invalid
-	 * 			type, the {@ invalidArgsMessage} field is filled with an error message.  On success, the
-	 * 			{@ invalidArgsMessage} remains empty {@code Optional}, and the {@code replacedResource}
+	 * 			type, the {@ invalidArgsMessage} field is filled with an error message.  On success,
+	 * 			{@ invalidArgsMessage} remains null, and the {@code replacedResource}
 	 * 			field is filled with resource values after saving.  In addition, after success, the
 	 * 			{@code savedAsNewResource} is set to True if no resource was found with this id already,
 	 * 			else False, suggesting an update instead.

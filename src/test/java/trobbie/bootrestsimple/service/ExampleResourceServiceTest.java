@@ -179,7 +179,7 @@ public class ExampleResourceServiceTest {
 	}
 
 	@Test
-	public void replaceResource_BadIdConversion_ReturnEmptyOptional() {
+	public void replaceResource_BadIdConversion_ReturnResultWithError() {
 		Integer indexTest = 2;
 		ExampleResource res = testDatabase.getResource(indexTest);
 
@@ -187,7 +187,7 @@ public class ExampleResourceServiceTest {
 		= resourceService.replaceResource("invalid_typed_id", res);
 
 		Assert.assertEquals(true, result.isPresent());
-		Assert.assertEquals(true, result.get().getInvalidArgsMessage().isPresent());
+		Assert.assertNotNull(result.get().getInvalidArgsMessage());
 	}
 
 	@Test

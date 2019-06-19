@@ -57,7 +57,7 @@ public class DefaultResourceController<T extends Resource<ID>, ID> implements Re
 		Optional<ReplaceResourceResult<T>> r = resourceService.replaceResource(id, givenResource);
 
 		if (r.isPresent()) {
-			if (r.get().getInvalidArgsMessage().isPresent())
+			if (r.get().getInvalidArgsMessage() != null)
 				return new ResponseEntity<T>(HttpStatus.BAD_REQUEST);
 			else
 				return new ResponseEntity<T>(
