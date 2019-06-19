@@ -12,6 +12,9 @@ import trobbie.bootrestsimple.model.Resource;
  */
 public interface ResourceService<T extends Resource<ID>, ID> {
 
+	// note: this class is technically mutable because replacedResource may contain
+	// mutable fields, which would require deep copying.  This is acceptable for our
+	// usage of this inner class.
 	public static final class ReplaceResourceResult<T> {
 		private final T replacedResource;
 		private final Boolean savedAsNewResource;
