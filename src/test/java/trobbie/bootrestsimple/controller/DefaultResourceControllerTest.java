@@ -292,6 +292,24 @@ public abstract class DefaultResourceControllerTest<T extends Resource<ID>, ID> 
 	}
 
 	@Test
+	public void replaceResource_UnknownServerError_Return500InternalServerError() throws Exception {
+
+		Mockito.when(resourceService.replaceResource(ArgumentMatchers.anyString(), ArgumentMatchers.any()))
+		.thenReturn(Optional.empty());
+
+		RequestBuilder requestBuilder = MockMvcRequestBuilders
+				.put(DefaultResourceController.RELATIVE_PATH + "/" + this.testDatabase.getResource(2).getId())
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.content(asJsonString(this.testDatabase.getResource(2)));
+
+		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+		Assert.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), result.getResponse().getStatus());
+	}
+
+	@Test
 	public void insertResource_RequestNewResource_Return201Created() throws Exception {
 
 		Integer new_index = this.testDatabase.saveResource(this.testDatabase.newUnsavedResource());
@@ -355,6 +373,24 @@ public abstract class DefaultResourceControllerTest<T extends Resource<ID>, ID> 
 		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 
 		Assert.assertEquals("Expected 415 response when sending XML in request body", HttpStatus.UNSUPPORTED_MEDIA_TYPE.value(), result.getResponse().getStatus());
+	}
+
+	@Test
+	public void insertResource_UnknownServerError_Return500InternalServerError() throws Exception {
+
+		Mockito.when(resourceService.insertResource(ArgumentMatchers.any()))
+		.thenReturn(Optional.empty());
+
+		RequestBuilder requestBuilder = MockMvcRequestBuilders
+				.post(DefaultResourceController.RELATIVE_PATH)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UTF-8")
+				.content(asJsonString(this.testDatabase.newUnsavedResource()));
+
+		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+		Assert.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR.value(), result.getResponse().getStatus());
 	}
 
 	@Test
