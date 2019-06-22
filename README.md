@@ -42,7 +42,7 @@ You need the following installed locally:
 
 1) Fork or clone this repository.
 ```
-git clone git@github.com:trobbie/micro-rest-json.git
+git clone git@github.com:trobbie/boot-rest-simple.git
 ```
 2) Run gradle build script in repository's directory.  This assembles and tests the project.
 ```
@@ -56,51 +56,38 @@ gradlew eclipse
 ```
 gradlew bootRun
 ```
-To access/add data directly (without using the REST API), navigate to the following:
+To access/add data directly (without using the REST API) in this development environment, navigate to the following:
 ```
 http://localhost:8080/h2-console
 ```
-Ensure JDBC URL is "jdbc:h2:mem:resourcedb" before connecting.
+Ensure JDBC URL is "jdbc:h2:mem:resourcedb" before connecting.  Username:Password is sa:<empty password>
 5) To access data through REST API, navigate to the resource URL:
 ```
-http://localhost:8080/resources
+http://localhost:8080/v1/resources
 ```
 
 ## Running the tests
 
-To run the unit tests:
+To run the unit tests and code coverage:
 ```
-gradlew test
-```
-
-### Break down into end to end tests
-
-TODO: Explain what these tests test and why
-
-```
-Give an example
-```
-
-### And coding style tests
-
-TODO: Explain what these tests test and why
-
-```
-Give an example
+gradlew check
 ```
 
 ## Deployment
 
-TODO: Add additional notes about how to deploy this on a live system
+To deploy from the archived JAR (instead of using ``` gradlew bootRun ```):
+```
+java -jar build/libs/boot-rest-simple-0.0.1-SNAPSHOT.jar
+```
 
 ## Built With
 
-* [Spring Boot](https://spring.io/projects/spring-boot/) - The web framework used
-* [Gradle](https://gradle.org/) - Dependency Management
+* [Spring Boot](https://spring.io/projects/spring-boot/) - Web Framework
+* [Gradle](https://gradle.org/) - Dependency/Task Management
 
 ## Versioning
 
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/trobbie/micro-rest-resource/releases). 
+We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/trobbie/boot-rest-simple/releases). 
 
 ## Authors
 
