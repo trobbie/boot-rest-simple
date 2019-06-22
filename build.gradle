@@ -2,6 +2,7 @@ plugins {
 	id 'org.springframework.boot' version '2.1.4.RELEASE'
 	id 'java'
 	id 'eclipse'
+	id 'jacoco'
 }
 
 apply plugin: 'io.spring.dependency-management'
@@ -21,8 +22,31 @@ dependencies {
 	// STARTER-TODO: change this to your database solution
 	implementation("com.h2database:h2")
 	
-//	implementation 'org.springframework.boot:spring-boot-starter-data-rest'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 //	runtimeOnly 'org.springframework.boot:spring-boot-devtools'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
+
+test {
+	jacoco {
+		destinationFile = file("$buildDir/jacoco/jacocoTest.exec")
+		classDumpDir = file("$buildDir/jacoco/classpathdumps")
+	}
+}
+
+jacocoTestCoverageVerification {
+	violationRules {
+		rule {
+			element = 'BUNDLE'  // coverage limit to be applied to bundle as a whole
+
+			limit {
+ 				counter = 'COMPLEXITY'
+				value = 'COVEREDRATIO'
+				minimum = 0.8
+			}
+		}
+		
+	}
+}
+jacocoTestCoverageVerification.dependsOn(jacocoTestReport)
+check.dependsOn(jacocoTestCoverageVerification)
