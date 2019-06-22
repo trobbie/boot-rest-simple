@@ -8,6 +8,7 @@ In particular, the following specific technologies are in use:
 - Version Control: Git
 - IoC/Starters: Spring Boot (NOTE: **not** using spring-boot-starter-data-rest)
 - Testing: JUnit and Mockito
+- Code Coverage: JaCoCo
 - IDE: Eclipse (but could use any IDE)
 
 # REST API Implementation
