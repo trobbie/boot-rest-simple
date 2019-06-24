@@ -60,9 +60,19 @@ public class DefaultResourceController<T extends Resource<ID>, ID> implements Re
 			if (r.get().getInvalidArgsMessage() != null)
 				return new ResponseEntity<T>(HttpStatus.BAD_REQUEST);
 			else
-				return new ResponseEntity<T>(
-						r.get().getReplacedResource(),
-						r.get().getSavedAsNewResource() ? HttpStatus.CREATED : HttpStatus.OK);
+				if (r.get().getSavedAsNewResource()) {
+					HttpHeaders headers = new HttpHeaders();
+					headers.add("Location", RELATIVE_PATH+"/"+r.get().getReplacedResource().getId().toString());
+
+					return new ResponseEntity<T>(
+							r.get().getReplacedResource(),
+							headers,
+							HttpStatus.CREATED);
+				} else {
+					return new ResponseEntity<T>(
+							r.get().getReplacedResource(),
+							HttpStatus.OK);
+				}
 		} else {
 			// something about client request could not allow it to be saved
 			return new ResponseEntity<T>(HttpStatus.INTERNAL_SERVER_ERROR);
