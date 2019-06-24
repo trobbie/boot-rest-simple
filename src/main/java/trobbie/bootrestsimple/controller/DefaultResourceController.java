@@ -39,10 +39,8 @@ public class DefaultResourceController<T extends Resource<ID>, ID> implements Re
 		// null response indicate something is wrong with the request
 		if (r == null) return new ResponseEntity<T>(HttpStatus.BAD_REQUEST);
 
-		if (r.isPresent())
-			return new ResponseEntity<T>(r.get(), HttpStatus.OK);
-		else
-			return new ResponseEntity<T>(HttpStatus.NOT_FOUND);
+		return r.map(resource -> new ResponseEntity<T>(resource, HttpStatus.OK)
+				).orElseGet(() -> new ResponseEntity<T>(HttpStatus.NOT_FOUND));
 	}
 
 	@Override
@@ -56,54 +54,53 @@ public class DefaultResourceController<T extends Resource<ID>, ID> implements Re
 
 		Optional<ReplaceResourceResult<T>> r = resourceService.replaceResource(id, givenResource);
 
-		if (r.isPresent()) {
-			if (r.get().getInvalidArgsMessage() != null)
+		return r.map(result -> {
+			if (result.getInvalidArgsMessage() != null)
 				return new ResponseEntity<T>(HttpStatus.BAD_REQUEST);
 			else
-				if (r.get().getSavedAsNewResource()) {
+
+				if (result.getSavedAsNewResource()) {
 					HttpHeaders headers = new HttpHeaders();
-					headers.add("Location", RELATIVE_PATH+"/"+r.get().getReplacedResource().getId().toString());
+					headers.add("Location", RELATIVE_PATH+"/"+result.getReplacedResource().getId().toString());
 
 					return new ResponseEntity<T>(
-							r.get().getReplacedResource(),
+							result.getReplacedResource(),
 							headers,
 							HttpStatus.CREATED);
 				} else {
 					return new ResponseEntity<T>(
-							r.get().getReplacedResource(),
+							result.getReplacedResource(),
 							HttpStatus.OK);
 				}
-		} else {
+		}).orElseGet(() -> {
 			// something about client request could not allow it to be saved
 			return new ResponseEntity<T>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		});
 	}
 
 	@Override
 	@RequestMapping(value=RELATIVE_PATH, method=RequestMethod.POST)
 	public ResponseEntity<T> insertResource(@RequestBody T givenResource) {
-		ResponseEntity<T> response;
 
 		if (givenResource.getId() != null) {
 			return new ResponseEntity<T>(HttpStatus.BAD_REQUEST);
 		}
 
 		Optional<T> r = resourceService.insertResource(givenResource);
-		if (r.isPresent()) {
+		return r.map(resource -> {
 			// ensure the service assigned an id (i.e. got saved)
-			if (r.get().getId() == null)
+			if (resource.getId() == null)
 				return new ResponseEntity<T>(HttpStatus.INTERNAL_SERVER_ERROR);
 
 			HttpHeaders headers = new HttpHeaders();
-			headers.add("Location", RELATIVE_PATH+"/"+r.get().getId().toString());
+			headers.add("Location", RELATIVE_PATH+"/"+resource.getId().toString());
 
-			response = new ResponseEntity<T>(r.get(), headers, HttpStatus.CREATED);
+			return new ResponseEntity<T>(resource, headers, HttpStatus.CREATED);
 
-		} else {
+		}).orElseGet(() -> {
 			// something about client request could not allow it to be saved
-			response = new ResponseEntity<T>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-		return response;
+			return new ResponseEntity<T>(HttpStatus.INTERNAL_SERVER_ERROR);
+		});
 	}
 
 	@Override
@@ -115,10 +112,8 @@ public class DefaultResourceController<T extends Resource<ID>, ID> implements Re
 		// null response indicate something is wrong with the request
 		if (r == null) return new ResponseEntity<T>(HttpStatus.BAD_REQUEST);
 
-		if (r.isPresent())
-			return new ResponseEntity<T>(r.get(), HttpStatus.NO_CONTENT);
-		else
-			return new ResponseEntity<T>(HttpStatus.NOT_FOUND);
+		return r.map(resource -> new ResponseEntity<T>(resource, HttpStatus.NO_CONTENT)
+				).orElseGet(() -> new ResponseEntity<T>(HttpStatus.NOT_FOUND));
 
 	}
 
