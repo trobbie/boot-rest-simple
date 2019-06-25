@@ -120,9 +120,7 @@ public class ExampleResourceServiceTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void replaceResource_NullResource_ThrowException() {
-
-		Optional<ResourceService.ReplaceResourceResult<ExampleResource>> result
-		= resourceService.replaceResource("1", null );
+		resourceService.replaceResource("1", null );
 	}
 
 	@Test
