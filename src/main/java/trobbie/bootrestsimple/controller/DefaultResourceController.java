@@ -55,10 +55,9 @@ public class DefaultResourceController<T extends Resource<ID>, ID> implements Re
 		Optional<ReplaceResourceResult<T>> r = resourceService.replaceResource(id, givenResource);
 
 		return r.map(result -> {
-			if (result.getInvalidArgsMessage() != null)
+			if (result.getInvalidArgsMessage() != null) {
 				return new ResponseEntity<T>(HttpStatus.BAD_REQUEST);
-			else
-
+			} else {
 				if (result.getSavedAsNewResource()) {
 					HttpHeaders headers = new HttpHeaders();
 					headers.add("Location", RELATIVE_PATH+"/"+result.getReplacedResource().getId().toString());
@@ -72,6 +71,7 @@ public class DefaultResourceController<T extends Resource<ID>, ID> implements Re
 							result.getReplacedResource(),
 							HttpStatus.OK);
 				}
+			}
 		}).orElseGet(() -> {
 			// something about client request could not allow it to be saved
 			return new ResponseEntity<T>(HttpStatus.INTERNAL_SERVER_ERROR);
