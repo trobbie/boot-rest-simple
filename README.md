@@ -61,7 +61,8 @@ To access/add data directly (without using the REST API) in this development env
 ```
 http://localhost:8080/h2-console
 ```
-Ensure JDBC URL is "jdbc:h2:mem:resourcedb" before connecting.  Username:Password is sa:<empty password>
+Ensure JDBC URL is "jdbc:h2:mem:resourcedb" before connecting.  Username:Password is sa:`<empty password>`
+  
 5) To access data through REST API, navigate to the resource URL:
 ```
 http://localhost:8080/v1/resources
